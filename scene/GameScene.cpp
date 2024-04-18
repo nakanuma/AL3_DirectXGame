@@ -6,13 +6,18 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	// 3Dモデルデータの開放
-	delete model_;
+	delete modelBlock_;
 
 	// ワールドトランスフォーム（ブロック用）のポインタのメモリを開放し、コンテナをクリア
-	for (WorldTransform* worldTransformBlock : worldTransformBlocks_) {
-		delete worldTransformBlock;
+	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+			delete worldTransformBlock;
+		}
 	}
 	worldTransformBlocks_.clear();
+
+	// デバッグカメラの開放
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
@@ -22,26 +27,74 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	// 3Dモデルデータの生成
-	model_ = Model::Create();
-	
+	modelBlock_ = Model::Create();
+
 	// 要素数
+	const uint32_t kNumBlockVirtical = 10;
 	const uint32_t kNumBlockHorizontal = 20;
 	// ブロック1個分の横幅
 	const float kBlockWidth = 2.0f;
+	const float kBlockHeight = 2.0f;
 	// 要素数を変更する
-	worldTransformBlocks_.resize(kNumBlockHorizontal);
-
-	// キューブの生成
-	for (uint32_t i = 0; i < kNumBlockHorizontal; ++i) {
-		worldTransformBlocks_[i] = new WorldTransform;
-		worldTransformBlocks_[i]->Initialize();
-		worldTransformBlocks_[i]->translation_.x = kBlockWidth * i;
-		worldTransformBlocks_[i]->translation_.y = 0.0f;
+	// 列数を設定（縦方向のブロック数）
+	worldTransformBlocks_.resize(kNumBlockVirtical);
+	for (uint32_t i = 0; i < kNumBlockVirtical; ++i) {
+		// 1列の要素数を設定（横方向のブロック数）
+		worldTransformBlocks_[i].resize(kNumBlockHorizontal);
 	}
 
+	// ブロックの生成
+	for (uint32_t i = 0; i < kNumBlockVirtical; ++i) {
+		for (uint32_t j = 0; j < kNumBlockHorizontal; ++j) {
+			// 偶数行の奇数列、奇数行の偶数列のブロックは生成しない
+			if (i % 2 == 0 && j % 2 != 0 || i % 2 != 0 && j % 2 == 0)
+				continue;
+			worldTransformBlocks_[i][j] = new WorldTransform;
+			worldTransformBlocks_[i][j]->Initialize();
+			worldTransformBlocks_[i][j]->translation_.x = kBlockWidth * j;
+			worldTransformBlocks_[i][j]->translation_.y = kBlockHeight * i;
+		}
+	}
+
+	// ビュープロジェクションの初期化
+	viewProjection_.Initialize();
+
+	// デバッグカメラの生成
+	debugCamera_ = new DebugCamera(1280, 720);
 }
 
 void GameScene::Update() {
+	// ブロックの更新処理
+	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+			// nullptrだった場合にはスキップ
+			if (!worldTransformBlock)
+				continue;
+			worldTransformBlock->UpdateMatrix();
+		}
+	}
+
+	// デバッグカメラの更新
+	debugCamera_->Update();
+
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_SPACE)) {
+		// デバッグカメラ有効フラグをトグル
+		isDebugCameraActive_ = !isDebugCameraActive_;
+	}
+#endif
+
+	// デバッグカメラの処理
+	if (isDebugCameraActive_) {
+		// デバッグカメラの更新
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		// ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+	} else {
+		// ビュープロジェクション行列の更新と転送
+		viewProjection_.UpdateMatrix();
+	}
 }
 
 void GameScene::Draw() {
@@ -70,6 +123,16 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	// ブロックの描画処理
+	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+			// nullptrだった場合にはスキップ
+			if (!worldTransformBlock)
+				continue;
+			modelBlock_->Draw(*worldTransformBlock, viewProjection_);
+		}
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

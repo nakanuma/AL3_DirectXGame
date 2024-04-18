@@ -8,6 +8,10 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "DebugCamera.h"
+
+// MyClass
+#include "MyMath.h"
 
 /// <summary>
 /// ゲームシーン
@@ -50,8 +54,17 @@ private: // メンバ変数
 	/// </summary>
 	
 	// 3Dモデルデータ
-	Model* model_ = nullptr;
+	Model* modelBlock_ = nullptr;
 
 	// ブロック用のワールドトランスフォーム
-	std::vector<WorldTransform*> worldTransformBlocks_;
+	std::vector<std::vector<WorldTransform*>> worldTransformBlocks_;
+
+	// ビュープロジェクション
+	ViewProjection viewProjection_;
+
+	// デバッグカメラ有効
+	bool isDebugCameraActive_ = false;
+
+	// デバッグカメラ
+	DebugCamera* debugCamera_ = nullptr;
 };

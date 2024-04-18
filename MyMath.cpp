@@ -109,9 +109,9 @@ Matrix4x4 MyMath::RotationZ(float rad) {
 Matrix4x4 MyMath::RotationXYZ(float rotateX, float rotateY, float rotateZ) { 
 	Matrix4x4 result = Identity();
 
-	Multiply(result, RotationX(rotateX));
-	Multiply(result, RotationY(rotateY));
-	Multiply(result, RotationZ(rotateZ));
+	result = Multiply(result, RotationX(rotateX));
+	result = Multiply(result, RotationY(rotateY));
+	result = Multiply(result, RotationZ(rotateZ));
 
 	return result;
 }
@@ -119,9 +119,9 @@ Matrix4x4 MyMath::RotationXYZ(float rotateX, float rotateY, float rotateZ) {
 Matrix4x4 MyMath::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) { 
 	Matrix4x4 result = Identity();
 
-	Multiply(result, Scaling(scale));
-	Multiply(result, RotationXYZ(rotate.x, rotate.y, rotate.z));
-	Multiply(result, Translation(translate));
+	result = Multiply(result, Scaling(scale));
+	result = Multiply(result, RotationXYZ(rotate.x, rotate.y, rotate.z));
+	result = Multiply(result, Translation(translate));
 
 	return result;
 }
