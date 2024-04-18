@@ -9,9 +9,6 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-// MyClass
-#include "MyMath.h"
-
 /// <summary>
 /// ゲームシーン
 /// </summary>
