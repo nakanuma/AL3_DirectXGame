@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 #include "Audio.h"
 #include "DirectXCommon.h"
@@ -47,4 +48,10 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	
+	// 3Dモデルデータ
+	Model* model_ = nullptr;
+
+	// ブロック用のワールドトランスフォーム
+	std::vector<WorldTransform*> worldTransformBlocks_;
 };
