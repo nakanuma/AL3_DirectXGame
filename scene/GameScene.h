@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 #include "Audio.h"
 #include "DirectXCommon.h"
@@ -7,6 +8,9 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+
+// MyClass
+#include "MyMath.h"
 
 /// <summary>
 /// ゲームシーン
@@ -47,4 +51,10 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	
+	// 3Dモデルデータ
+	Model* model_ = nullptr;
+
+	// ブロック用のワールドトランスフォーム
+	std::vector<WorldTransform*> worldTransformBlocks_;
 };
