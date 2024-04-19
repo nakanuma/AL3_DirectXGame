@@ -12,6 +12,7 @@
 
 // MyClass
 #include "MyMath.h"
+#include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -67,4 +68,10 @@ private: // メンバ変数
 
 	// デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
+
+	// 天球
+	Skydome* skydome_ = nullptr;
+
+	// 3Dモデル（天球）
+	Model* modelSkydome_ = nullptr;
 };
