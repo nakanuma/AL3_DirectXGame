@@ -85,6 +85,9 @@ void GameScene::Update() {
 		}
 	}
 
+	// 天球の更新
+	skydome_->Update();
+
 	// デバッグカメラの更新
 	debugCamera_->Update();
 
@@ -106,9 +109,6 @@ void GameScene::Update() {
 		// ビュープロジェクション行列の更新と転送
 		viewProjection_.UpdateMatrix();
 	}
-
-	// 天球の更新
-	skydome_->Update();
 }
 
 void GameScene::Draw() {

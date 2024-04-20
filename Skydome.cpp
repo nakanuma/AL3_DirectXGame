@@ -12,6 +12,9 @@ void Skydome::Initialize(Model* model, ViewProjection* viewProjection)
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+
+	// 天球のサイズを変更
+	worldTransform_.scale_ = {100.0f, 100.0f, 100.0f};
 }
 
 void Skydome::Update() { worldTransform_.UpdateMatrix(); }
