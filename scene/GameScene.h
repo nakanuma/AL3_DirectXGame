@@ -13,6 +13,7 @@
 // MyClass
 #include "MyMath.h"
 #include "Skydome.h"
+#include "Player.h"
 
 /// <summary>
 /// ゲームシーン
@@ -74,4 +75,10 @@ private: // メンバ変数
 
 	// 3Dモデル（天球）
 	Model* modelSkydome_ = nullptr;
+
+	// 自キャラ
+	Player* player_ = nullptr;
+
+	// 3Dモデル（自キャラ）
+	Model* modelPlayer_ = nullptr;
 };

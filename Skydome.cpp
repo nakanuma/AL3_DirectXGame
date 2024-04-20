@@ -17,7 +17,10 @@ void Skydome::Initialize(Model* model, ViewProjection* viewProjection)
 	worldTransform_.scale_ = {100.0f, 100.0f, 100.0f};
 }
 
-void Skydome::Update() { worldTransform_.UpdateMatrix(); }
+void Skydome::Update() { 
+	// 行列を定数バッファに転送
+	worldTransform_.UpdateMatrix(); 
+}
 
 void Skydome::Draw()
 {

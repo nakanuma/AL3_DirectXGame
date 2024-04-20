@@ -21,6 +21,9 @@ GameScene::~GameScene() {
 
 	// 3Dモデル（天球）の開放
 	delete modelSkydome_;
+
+	// 自キャラの開放
+	delete player_;
 }
 
 void GameScene::Initialize() {
@@ -72,6 +75,14 @@ void GameScene::Initialize() {
 	skydome_ = new Skydome();
 	// 天球の初期化
 	skydome_->Initialize(modelSkydome_, &viewProjection_);
+
+	// 3Dモデル（自キャラ）の生成
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
+
+	// 自キャラの生成
+	player_ = new Player();
+	// 自キャラの初期化
+	player_->Initialize(modelPlayer_, &viewProjection_);
 }
 
 void GameScene::Update() {
@@ -87,6 +98,9 @@ void GameScene::Update() {
 
 	// 天球の更新
 	skydome_->Update();
+
+	// 自キャラの更新
+	player_->Update();
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
@@ -150,6 +164,9 @@ void GameScene::Draw() {
 
 	// 天球の描画
 	skydome_->Draw();
+
+	// 自キャラの描画
+	player_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
