@@ -149,7 +149,7 @@ void GameScene::Draw() {
 	Model::PreDraw(commandList);
 
 	/// <summary>
-	/// ここに3Dオブジェクトの描画処理を追加できる
+	/// ここに3Dオブジェクトの描画処理を追加できる 
 	/// </summary>
 
 	// ブロックの描画処理
