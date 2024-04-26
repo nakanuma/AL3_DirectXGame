@@ -14,6 +14,7 @@
 #include "MyMath.h"
 #include "Skydome.h"
 #include "Player.h"
+#include "MapChipField.h"
 
 /// <summary>
 /// ゲームシーン
@@ -45,6 +46,11 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// 表示ブロックの生成
+	/// </summary>
+	void GenerateBlocks();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -81,4 +87,7 @@ private: // メンバ変数
 
 	// 3Dモデル（自キャラ）
 	Model* modelPlayer_ = nullptr;
+
+	// マップチップフィールド
+	MapChipField* mapChipField_;
 };
