@@ -1,5 +1,6 @@
 #include "MyMath.h"
 #include <math.h>
+#include <cmath>
 
 Matrix4x4 MyMath::Multiply(const Matrix4x4& m1, const Matrix4x4 m2){ 
 	Matrix4x4 result = Identity();
@@ -124,4 +125,8 @@ Matrix4x4 MyMath::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, 
 	result = Multiply(result, Translation(translate));
 
 	return result;
+}
+
+float MyMath::easeInOutQuad(float t) { 
+	return t < 0.5f ? 2.0f * t * t : 1.0f - powf(-2.0f * t + 2.0f, 2.0f) / 2.0f; 
 }

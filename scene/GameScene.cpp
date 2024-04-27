@@ -40,6 +40,7 @@ void GameScene::Initialize() {
 
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
+	viewProjection_.translation_ = {4.0f, 3.0f, -30.0f}; // カメラの初期座標を変更
 
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -57,8 +58,10 @@ void GameScene::Initialize() {
 
 	// 自キャラの生成
 	player_ = new Player();
+	// 座標をマップチップ番号で指定
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 	// 自キャラの初期化
-	player_->Initialize(modelPlayer_, &viewProjection_);
+	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 
 	// マップチップフィールドの生成とファイル読み込み
 	mapChipField_ = new MapChipField;

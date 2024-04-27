@@ -29,4 +29,10 @@ public:
 
 	// アフィン変換行列の作成
 	static Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+
+	///
+	///	easing
+	/// 
+	
+	static float easeInOutQuad(float t);
 };
