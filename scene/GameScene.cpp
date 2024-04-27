@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "TextureManager.h"
 #include <cassert>
+#include "imgui.h"
 
 GameScene::GameScene() {}
 
@@ -69,6 +70,18 @@ void GameScene::Initialize() {
 
 	// 表示ブロックの生成
 	GenerateBlocks();
+
+	// カメラコントローラの初期化
+	// 生成
+	cameraController_ = new CameraController;
+	// 初期化
+	cameraController_->Initialize();
+	// 追従対象をセット
+	cameraController_->SetTarget(player_);
+	// リセット（瞬間合わせ）
+	cameraController_->Reset();
+	// 移動範囲をセット
+	cameraController_->SetMovableArea(movableArea_);
 }
 
 void GameScene::Update() {
@@ -90,6 +103,15 @@ void GameScene::Update() {
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
+
+	// カメラコントローラの更新
+	viewProjection_.translation_ = cameraController_->GetTranslation();
+	cameraController_->Update();
+
+	// デバッグ用
+	/*ImGui::Begin("Window");
+	ImGui::DragFloat3("viewProjection", &viewProjection_.translation_.x);
+	ImGui::End();*/
 
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_SPACE)) {

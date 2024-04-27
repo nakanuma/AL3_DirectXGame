@@ -34,5 +34,7 @@ public:
 	///	easing
 	/// 
 	
-	static float easeInOutQuad(float t);
+	static Vector3 Lerp(Vector3 a, Vector3 b, float t);
+
+	static float EaseInOutQuad(float t);
 };

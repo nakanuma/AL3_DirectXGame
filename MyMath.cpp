@@ -127,6 +127,20 @@ Matrix4x4 MyMath::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, 
 	return result;
 }
 
-float MyMath::easeInOutQuad(float t) { 
+
+
+Vector3 MyMath::Lerp(Vector3 a, Vector3 b, float t) { 
+	// tが0~1の範囲に収まるようにクランプする
+	t = (t < 0.0f) ? 0.0f : t;
+	t = (t > 1.0f) ? 1.0f : t;
+
+	return Vector3{
+		a.x + t * (b.x - a.x),
+		a.y + t * (b.y - a.y), 
+		a.z + t * (b.z - a.z)
+	};
+}
+
+float MyMath::EaseInOutQuad(float t) { 
 	return t < 0.5f ? 2.0f * t * t : 1.0f - powf(-2.0f * t + 2.0f, 2.0f) / 2.0f; 
 }

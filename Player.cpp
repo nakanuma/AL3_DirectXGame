@@ -97,7 +97,7 @@ void Player::Update() {
 			// 状態に応じた角度を取得する
 			float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
 			// 自キャラの角度を設定する
-			worldTransform_.rotation_.y = turnFirstRotationY_ + (destinationRotationY - turnFirstRotationY_) * MyMath::easeInOutQuad(turnProgress);
+			worldTransform_.rotation_.y = turnFirstRotationY_ + (destinationRotationY - turnFirstRotationY_) * MyMath::EaseInOutQuad(turnProgress);
 		}
 		// 空中
 	} else {

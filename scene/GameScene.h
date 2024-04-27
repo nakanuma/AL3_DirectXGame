@@ -15,6 +15,7 @@
 #include "Skydome.h"
 #include "Player.h"
 #include "MapChipField.h"
+#include "CameraController.h"
 
 /// <summary>
 /// ゲームシーン
@@ -60,7 +61,7 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
-	
+
 	// 3Dモデルデータ
 	Model* modelBlock_ = nullptr;
 
@@ -90,4 +91,10 @@ private: // メンバ変数
 
 	// マップチップフィールド
 	MapChipField* mapChipField_;
+
+	// カメラコントローラ
+	CameraController* cameraController_ = nullptr;
+
+	// カメラの移動可能範囲
+	Rect movableArea_ = {22, 1000, 12, 12};
 };

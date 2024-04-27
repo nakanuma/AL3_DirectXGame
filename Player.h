@@ -31,6 +31,18 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// WorldTransformを取得
+	/// </summary>
+	/// <returns></returns>
+	const WorldTransform& GetWorldTransform() { return worldTransform_; }
+
+	/// <summary>
+	/// 速度を取得
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetVelocity() const { return velocity_; }
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
