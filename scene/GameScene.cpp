@@ -39,12 +39,15 @@ void GameScene::Initialize() {
 	// 3Dモデルデータの生成
 	modelBlock_ = Model::Create();
 
+
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	viewProjection_.translation_ = {4.0f, 3.0f, -30.0f}; // カメラの初期座標を変更
 
+
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
+
 
 	// 3Dモデル（天球）の生成
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -54,15 +57,6 @@ void GameScene::Initialize() {
 	// 天球の初期化
 	skydome_->Initialize(modelSkydome_, &viewProjection_);
 
-	// 3Dモデル（自キャラ）の生成
-	modelPlayer_ = Model::CreateFromOBJ("player", true);
-
-	// 自キャラの生成
-	player_ = new Player();
-	// 座標をマップチップ番号で指定
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-	// 自キャラの初期化
-	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 
 	// マップチップフィールドの生成とファイル読み込み
 	mapChipField_ = new MapChipField;
@@ -70,6 +64,19 @@ void GameScene::Initialize() {
 
 	// 表示ブロックの生成
 	GenerateBlocks();
+
+
+	// 3Dモデル（自キャラ）の生成
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
+	// 自キャラの生成
+	player_ = new Player();
+	// 座標をマップチップ番号で指定
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+	// 自キャラの初期化
+	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
+	// 自キャラのマップチップフィールド情報をセット
+	player_->SetMapChipField(mapChipField_);
+
 
 	// カメラコントローラの初期化
 	// 生成
