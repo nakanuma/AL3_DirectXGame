@@ -82,15 +82,15 @@ void Player::Update() {
 	// 行列を定数バッファに転送
 	worldTransform_.UpdateMatrix();
 
-	// デバッグ用
-	ImGui::Begin("Window");
-	ImGui::DragFloat3("translate", &worldTransform_.translation_.x);
-	ImGui::DragFloat3("velocity", &velocity_.x);
-	ImGui::DragFloat3("moveAmount", &collisionMapInfo.moveAmount.x);
-	if (onGround_) {
-		ImGui::Text("onGround");
-	}
-	ImGui::End();
+	//// デバッグ用
+	//ImGui::Begin("Window");
+	//ImGui::DragFloat3("translate", &worldTransform_.translation_.x);
+	//ImGui::DragFloat3("velocity", &velocity_.x);
+	//ImGui::DragFloat3("moveAmount", &collisionMapInfo.moveAmount.x);
+	//if (onGround_) {
+	//	ImGui::Text("onGround");
+	//}
+	//ImGui::End();
 }
 
 void Player::Draw() {
