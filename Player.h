@@ -88,6 +88,9 @@ public:
 	// 天井に接触している場合の処理
 	void CollisionCeiling(const CollisionMapInfo& info);
 
+	// 判定結果を反映して移動させる
+	void moveBasedOnJudgment(const CollisionMapInfo& info);
+
 	/// <summary>
 	/// 指定した角の座標を計算
 	/// </summary>
@@ -131,5 +134,5 @@ private:
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
 
-	static inline const float kBlank = 0.5f;
+	static inline const float kBlank = 0.0001f;
 };
