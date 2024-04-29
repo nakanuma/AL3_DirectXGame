@@ -94,6 +94,8 @@ public:
 	void CollisionCeiling(const CollisionMapInfo& info);
 	// 地面に接触している場合の処理
 	void CollisionGround(const CollisionMapInfo& info);
+	// 壁に接触している場合の処理
+	void CollisionWall(const CollisionMapInfo& info);
 
 	// 判定結果を反映して移動させる
 	void moveBasedOnJudgment(const CollisionMapInfo& info);
@@ -133,13 +135,14 @@ private:
 	static inline const float kLimitFallSpeed = 1.0f; // 最大落下速度（下方向）
 	static inline const float kJumpAcceleration = 1.0f; // ジャンプ初速（上方向）
 	static inline const float kAttenuationLanding = 0.05f;
+	static inline const float kAttenuationWall = 0.7f; // 壁接触時の速度減衰率
 
 	// マップチップによるフィールド
 	MapChipField* mapChipField_ = nullptr;
 
 	// キャラクターの当たり判定サイズ
-	static inline const float kWidth = 0.8f;
-	static inline const float kHeight = 0.8f;
+	static inline const float kWidth = 1.8f;
+	static inline const float kHeight = 1.8f;
 
 	static inline const float kBlank = 0.0001f;
 };
