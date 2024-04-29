@@ -24,7 +24,7 @@ enum Corner {
 // マップとの当たり判定情報
 struct CollisionMapInfo {
 	bool isCeilingCollision = false; // 天井衝突フラグ
-	bool onGround = false; // 着地フラグ
+	bool landing = false; // 着地フラグ
 	bool isWallCollision = false; // 壁接触フラグ
 	Vector3 moveAmount; // 移動量
 };
@@ -57,6 +57,11 @@ public:
 	void MoveInput();
 
 	/// <summary>
+	/// 旋回制御
+	/// </summary>
+	void TurningControl();
+
+	/// <summary>
 	/// WorldTransformを取得
 	/// </summary>
 	/// <returns></returns>
@@ -87,6 +92,8 @@ public:
 
 	// 天井に接触している場合の処理
 	void CollisionCeiling(const CollisionMapInfo& info);
+	// 地面に接触している場合の処理
+	void CollisionGround(const CollisionMapInfo& info);
 
 	// 判定結果を反映して移動させる
 	void moveBasedOnJudgment(const CollisionMapInfo& info);
