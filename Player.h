@@ -131,8 +131,8 @@ private:
 	MapChipField* mapChipField_ = nullptr;
 
 	// キャラクターの当たり判定サイズ
-	static inline const float kWidth = 0.8f;
-	static inline const float kHeight = 0.8f;
+	static inline const float kWidth = 1.8f;
+	static inline const float kHeight = 1.8f;
 
 	static inline const float kBlank = 0.0001f;
 };
