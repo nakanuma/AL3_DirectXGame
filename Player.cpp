@@ -59,6 +59,21 @@ void Player::Update() {
 	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kMoveLimitY, +kMoveLimitY);
 
 	///
+	///	旋回処理（回転）
+	/// 
+	Rotate();
+
+	///
+	///	攻撃処理
+	/// 
+	Attack();
+
+	// 弾が発生している間だけ弾の更新を行う
+	if (bullet_) {
+		bullet_->Update();
+	}
+
+	///
 	///	行列更新
 	/// 
 
@@ -78,4 +93,32 @@ void Player::Update() {
 void Player::Draw(ViewProjection& viewProjection) {
 	// 3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+
+	// 弾描画
+	if (bullet_) {
+		bullet_->Draw(viewProjection);
+	}
+}
+
+void Player::Rotate() {
+	// 回転の速さ[ラジアン/frame]
+	const float kRotSpeed = 0.02f;
+
+	// 押した方向で移動ベクトルを変更
+	if (input_->PushKey(DIK_A)) {
+		worldTransform_.rotation_.y -= kRotSpeed;
+	} else if (input_->PushKey(DIK_D)) {
+		worldTransform_.rotation_.y += kRotSpeed;
+	}
+}
+
+void Player::Attack() { 
+	if (input_->TriggerKey(DIK_SPACE)) {
+		// 弾を生成し、初期化
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, worldTransform_.translation_);
+
+		// 弾を登録する
+		bullet_ = newBullet;
+	}
 }
