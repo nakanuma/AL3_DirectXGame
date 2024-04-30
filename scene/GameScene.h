@@ -49,9 +49,4 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	
-	// 3Dモデルデータ
-	Model* model_ = nullptr;
-
-	// ブロック用のワールドトランスフォーム
-	std::vector<WorldTransform*> worldTransformBlocks_;
 };
