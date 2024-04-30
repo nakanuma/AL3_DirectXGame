@@ -3,6 +3,13 @@
 #include <algorithm>
 #include "imgui.h"
 
+Player::~Player() {
+	// bullets_の開放
+	for (PlayerBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
+
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	// NULLポインタチェック
 	assert(model);
@@ -68,9 +75,9 @@ void Player::Update() {
 	/// 
 	Attack();
 
-	// 弾が発生している間だけ弾の更新を行う
-	if (bullet_) {
-		bullet_->Update();
+	// 弾の更新
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();
 	}
 
 	///
@@ -95,8 +102,8 @@ void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
 	// 弾描画
-	if (bullet_) {
-		bullet_->Draw(viewProjection);
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Draw(viewProjection);
 	}
 }
 
@@ -114,11 +121,14 @@ void Player::Rotate() {
 
 void Player::Attack() { 
 	if (input_->TriggerKey(DIK_SPACE)) {
+		// 自キャラの座標をコピー
+		Vector3 position = worldTransform_.translation_;
+
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, position);
 
 		// 弾を登録する
-		bullet_ = newBullet;
+		bullets_.push_back(newBullet);
 	}
 }
