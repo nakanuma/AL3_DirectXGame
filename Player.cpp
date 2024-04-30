@@ -1,7 +1,9 @@
 #include "Player.h"
-#include <cassert>
-#include <algorithm>
 #include "imgui.h"
+#include <algorithm>
+#include <cassert>
+
+#include "MyMath.h"
 
 Player::~Player() {
 	// bullets_の開放
@@ -28,8 +30,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 void Player::Update() {
 	///
 	///	移動処理
-	/// 
-	
+	///
+
 	// キャラクターの移動ベクトル
 	Vector3 move = {0.0f, 0.0f, 0.0f};
 
@@ -55,7 +57,7 @@ void Player::Update() {
 
 	///
 	///	移動制限
-	/// 
+	///
 
 	// 移動限界座標
 	const float kMoveLimitX = 34.0f;
@@ -67,18 +69,27 @@ void Player::Update() {
 
 	///
 	///	旋回処理（回転）
-	/// 
+	///
 	Rotate();
 
 	///
 	///	攻撃処理
-	/// 
+	///
 	Attack();
 
 	// 弾の更新
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Update();
 	}
+
+	// デスフラグの立った弾を削除
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
 
 	///
 	///	行列更新
@@ -119,14 +130,21 @@ void Player::Rotate() {
 	}
 }
 
-void Player::Attack() { 
+void Player::Attack() {
 	if (input_->TriggerKey(DIK_SPACE)) {
 		// 自キャラの座標をコピー
 		Vector3 position = worldTransform_.translation_;
 
+		// 弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+
+		// 速度ベクトルを自機の向きに合わせて回転させる
+		velocity = MyMath::TransformNormal(velocity, worldTransform_.matWorld_);
+
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, position);
+		newBullet->Initialize(model_, position, velocity);
 
 		// 弾を登録する
 		bullets_.push_back(newBullet);

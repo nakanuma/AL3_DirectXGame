@@ -7,6 +7,11 @@
 class MyMath {
 public:
 	///
+	///	3次元ベクトル
+	/// 
+	static Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
+
+	///
 	///	4x4行列
 	///
 
