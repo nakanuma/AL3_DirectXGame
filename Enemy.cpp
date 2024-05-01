@@ -21,7 +21,7 @@ void Enemy::Initialize(Model* model, const Vector3& position) {
 	// 接近時の速度を設定
 	approachSpeed_ = LoadFile::Vector3FromCSV("Resources/enemySpeed.csv", "Approach");
 	// 離脱時の速度を設定
-	leaveSpeed_ = LoadFile::Vector3FromCSV("Resources/enemySpeed.csv", "Leave");
+	leaveSpeed_ = LoadFile::Vector3FromCSV("Resources/enemySpeed.csv", "Leave"); 
 }
 
 void Enemy::Update() {
