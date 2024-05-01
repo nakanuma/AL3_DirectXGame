@@ -2,6 +2,12 @@
 #include "Model.h"
 #include "WorldTransform.h"
 
+// 行動フェーズ
+enum class Phase {
+	Approach, // 接近する
+	Leave,    // 離脱する
+};
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -24,6 +30,16 @@ public:
 	/// </summary>
 	void Draw(const ViewProjection& viewProjection);
 
+	/// <summary>
+	/// 敵が接近してくる際の更新処理
+	/// </summary>
+	void Approach();
+
+	/// <summary>
+	/// 敵が離脱する際の更新処理
+	/// </summary>
+	void Leave();
+
 private:
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
@@ -33,4 +49,12 @@ private:
 
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+
+	// 初期フェーズ
+	Phase phase_ = Phase::Approach;
+
+	// 接近時の速度
+	Vector3 approachSpeed_;
+	// 離脱時の速度
+	Vector3 leaveSpeed_;
 };
