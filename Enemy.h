@@ -57,4 +57,7 @@ private:
 	Vector3 approachSpeed_;
 	// 離脱時の速度
 	Vector3 leaveSpeed_;
+
+	// メンバ関数ポインタのテーブル
+	static void (Enemy::*spFuncTable[])();
 };

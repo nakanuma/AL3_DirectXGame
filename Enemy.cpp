@@ -28,17 +28,9 @@ void Enemy::Update() {
 	///
 	///	移動処理
 	///
-	switch (phase_) {
-	case Phase::Approach:
-	default:
-		// 接近フェーズの更新
-		Approach();
-		break;
-	case Phase::Leave:
-		// 離脱フェーズの更新
-		Leave();
-		break;
-	}
+	
+	// 現在フェーズの関数を実行
+	(this->*spFuncTable[static_cast<size_t>(phase_)])();
 
 	// 行列の更新
 	worldTransform_.UpdateMatrix();
@@ -68,3 +60,9 @@ void Enemy::Leave() {
 	// 移動（ベクトルを加算）
 	worldTransform_.translation_ += leaveSpeed_;
 }
+
+// フェーズの関数テーブル
+void (Enemy::*Enemy::spFuncTable[])() = {
+	&Enemy::Approach, 
+	&Enemy::Leave
+};
