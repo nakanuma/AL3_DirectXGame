@@ -31,17 +31,22 @@ struct Vector3 final {
 	// Multiply
 	Vector3 operator*(float scalar) const { return {x * scalar, y * scalar, z * scalar}; }
 
-	Vector3& operator*=(const Vector3& other) { 
+	Vector3& operator*=(const Vector3& other) {
 		x *= other.x;
 		y *= other.y;
 		z *= other.z;
 		return *this;
 	}
 
-	Vector3& operator*=(const float& scalar) { 
+	Vector3& operator*=(const float& scalar) {
 		x *= scalar;
 		y *= scalar;
 		z *= scalar;
 		return *this;
 	}
+
+	// division
+	Vector3 operator/(const Vector3& other) const { return {x / other.x, y / other.y, z / other.z}; }
+
+	Vector3 operator/(const float& scalar) const { return {x / scalar, y / scalar, z / scalar}; }
 };

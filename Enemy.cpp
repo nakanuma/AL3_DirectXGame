@@ -126,17 +126,18 @@ void Enemy::Fire() {
 	Vector3 position = worldTransform_.translation_;
 
 	// 弾の速度
-	const float kBulletSpeed = 0.02f;
+	/*const float kBulletSpeed = 0.02f;*/
 
 	// 敵キャラ->自キャラへの差分ベクトルを求める
 	Vector3 direction = player_->GetWorldPosition() - GetWorldPosition();
 	// ベクトルを正規化
 	MyMath::Normalize(direction);
-	// ベクトルの長さを、早さに合わせる
-	Vector3 velocity = direction * kBulletSpeed;
+	// ベクトルの長さを設定
+	Vector3 velocity = direction;
 
 	// 弾を生成し、初期化
 	EnemyBullet* newBullet = new EnemyBullet();
+	newBullet->SetPlayer(player_); // プレイヤーのポインタを設定
 	newBullet->Initialize(model_, position, velocity);
 
 	// 弾を登録する

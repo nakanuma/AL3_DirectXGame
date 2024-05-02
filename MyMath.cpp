@@ -1,5 +1,12 @@
 #include "MyMath.h"
 #include <math.h>
+#include <cmath>
+#include <algorithm>
+
+float MyMath::Lerp(const float& a, const float& b, float t) {
+	// aからbまでの差を計算し、tを乗じて補間
+	return a + (b - a) * t;
+}
 
 Vector3 MyMath::TransformNormal(const Vector3& v, const Matrix4x4& m) { 
 	return Vector3{
@@ -21,6 +28,60 @@ Vector3 MyMath::Normalize(const Vector3& v) {
 		v.y / norm,
 		v.z / norm
 	);
+}
+
+float MyMath::Dot(const Vector3& v1, const Vector3& v2) { 
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; 
+}
+
+Vector3 MyMath::Lerp(const Vector3& v1, const Vector3& v2, float t) {
+	// ベクトルの差を計算
+	Vector3 diff = v2 - v1;
+	// tを乗じて補間を行う
+	diff *= t;
+	// ベクトルv1に結果を加えて補間されたベクトルを計算
+	return v1 + diff;
+}
+
+Vector3 MyMath::Slerp(const Vector3& v1, const Vector3& v2, float t) {
+	// それぞれのベクトルを正規化
+	Vector3 normalizedV1 = Normalize(v1);
+	Vector3 normalizedV2 = Normalize(v2);
+
+	// 内積を求める
+	float dot = Dot(normalizedV1, normalizedV2);
+
+	// 誤差により1.0fを超えるのを防ぐ
+	dot = std::clamp(dot, -1.0f, 1.0f);
+
+	// θの角度を求める
+	float theta = std::acos(dot);
+	// サインθを求める
+	float sinTheta = std::sin(theta);
+
+	// サイン(θ(1-t))を求める
+	float sinThetaFrom = std::sin((1 - t) * theta);
+	// サインθtを求める
+	float sinThetaTo = std::sin(t * theta);
+
+	// 球面線形補間したベクトル（単位ベクトル）
+	Vector3 slerpVector;
+	// ゼロ除算を防ぐ
+	if (sinTheta < 1.0e-5) {
+		slerpVector = normalizedV1;
+	} else {
+		// 球面線形補間したベクトル（単位ベクトル）
+		slerpVector = (normalizedV1 * sinThetaFrom + normalizedV2 * sinThetaTo) / sinTheta;
+	}
+
+	// ベクトルの長さはv1とv2の長さを線形補間
+	float length1 = Length(v1);
+	float length2 = Length(v2);
+	// Lerpで補間ベクトルの長さを求める
+	float length = Lerp(length1, length2, t);
+
+	// 長さを反映
+	return slerpVector * length;
 }
 
 Matrix4x4 MyMath::Multiply(const Matrix4x4& m1, const Matrix4x4 m2) { 

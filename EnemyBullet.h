@@ -2,6 +2,9 @@
 #include "Model.h"
 #include "WorldTransform.h"
 
+// 前方宣言
+class Player;
+
 /// <summary>
 /// 敵の弾
 /// </summary>
@@ -32,6 +35,18 @@ public:
 	/// <returns>デスフラグ</returns>
 	bool IsDead() const { return isDead_; }
 
+	/// <summary>
+	/// プレイヤーのアドレスを設定
+	/// </summary>
+	/// <param name="player">プレイヤー</param>
+	void SetPlayer(Player* player) { player_ = player; }
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPosition();
+
 private:
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
@@ -51,4 +66,7 @@ private:
 	int32_t deathTimer_ = kLifeTime;
 	// デスフラグ
 	bool isDead_ = false;
+
+	// プレイヤーのポインタ
+	Player* player_ = nullptr;
 };

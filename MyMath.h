@@ -7,6 +7,12 @@
 class MyMath {
 public:
 	///
+	/// float
+	/// 
+
+	static float Lerp(const float& a, const float& b, float t);
+
+	///
 	///	3次元ベクトル
 	/// 
 	static Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
@@ -15,6 +21,14 @@ public:
 	static float Length(const Vector3& v);
 	// 正規化
 	static Vector3 Normalize(const Vector3& v);
+
+	// 内積
+	static float Dot(const Vector3& v1, const Vector3& v2);
+
+	// 線形補間
+	static Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+	// 球面線形補間
+	static Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
 	///
 	///	4x4行列
