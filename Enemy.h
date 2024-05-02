@@ -2,6 +2,9 @@
 #include "Model.h"
 #include "WorldTransform.h"
 
+// MyClass
+#include "EnemyBullet.h"
+
 // 行動フェーズ
 enum class Phase {
 	Approach, // 接近する
@@ -13,6 +16,11 @@ enum class Phase {
 /// </summary>
 class Enemy {
 public:
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~Enemy();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -40,7 +48,19 @@ public:
 	/// </summary>
 	void Leave();
 
+	/// <summary>
+	/// 弾発射
+	/// </summary>
+	void Fire();
+
+	// 接近フェーズ初期化
+	void InitializeApproach();
+
 private:
+	///
+	///	3Dモデル
+	/// 
+
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
 
@@ -50,6 +70,10 @@ private:
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
+	///
+	///	移動
+	/// 
+
 	// 初期フェーズ
 	Phase phase_ = Phase::Approach;
 
@@ -57,4 +81,16 @@ private:
 	Vector3 approachSpeed_;
 	// 離脱時の速度
 	Vector3 leaveSpeed_;
+
+	///
+	///	弾
+	/// 
+
+	// 弾
+	std::list<EnemyBullet*> bullets_;
+
+	// 発射間隔
+	static const int kFireInterval = 60;
+	// 発射タイマー
+	int32_t fireTimer_ = 0;
 };

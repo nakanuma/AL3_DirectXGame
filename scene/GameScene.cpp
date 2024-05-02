@@ -42,7 +42,7 @@ void GameScene::Initialize() {
 	// 敵キャラの生成
 	enemy_ = new Enemy();
 	// 敵キャラの初期化
-	enemy_->Initialize(model_, {0.0f, 2.0f, 30.0f}); // 一旦適当な値を設定
+	enemy_->Initialize(model_, {16.0f, 2.0f, 30.0f}); // 一旦適当な値を設定
 
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(dxCommon_->GetBackBufferWidth(), dxCommon_->GetBackBufferWidth());

@@ -5,6 +5,13 @@
 
 #include "LoadFile.h"
 
+Enemy::~Enemy() {
+	// bullets_の開放
+	for (EnemyBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
+
 void Enemy::Initialize(Model* model, const Vector3& position) {
 	// NULLポインタチェック
 	assert(model);
@@ -22,6 +29,9 @@ void Enemy::Initialize(Model* model, const Vector3& position) {
 	approachSpeed_ = LoadFile::Vector3FromCSV("Resources/enemySpeed.csv", "Approach");
 	// 離脱時の速度を設定
 	leaveSpeed_ = LoadFile::Vector3FromCSV("Resources/enemySpeed.csv", "Leave");
+
+	// 接近フェーズ初期化
+	InitializeApproach();
 }
 
 void Enemy::Update() {
@@ -40,6 +50,24 @@ void Enemy::Update() {
 		break;
 	}
 
+	///
+	///	攻撃処理
+	/// 
+
+	// 弾の更新
+	for (EnemyBullet* bullet : bullets_) {
+		bullet->Update();
+	}
+
+	// デスフラグの立った弾を削除
+	bullets_.remove_if([](EnemyBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
 	// 行列の更新
 	worldTransform_.UpdateMatrix();
 
@@ -53,11 +81,34 @@ void Enemy::Update() {
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	// モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+
+	// 弾描画
+	for (EnemyBullet* bullet : bullets_) {
+		bullet->Draw(viewProjection);
+	}
 }
 
 void Enemy::Approach() {
-	// 移動（ベクトルを加算）
+	///
+	///	移動
+	/// 
+	
 	worldTransform_.translation_ += approachSpeed_;
+
+	///
+	///	攻撃
+	/// 
+
+	// 発射タイマーをカウントダウン
+	fireTimer_--;
+	// 指定時間に達した
+	if (fireTimer_ <= 0) {
+		// 弾を発射
+		Fire();
+		// 発射タイマーを初期化
+		fireTimer_ = kFireInterval;
+	}
+
 	// 規定の位置に到達したら離脱
 	if (worldTransform_.translation_.z < 0.0f) {
 		phase_ = Phase::Leave;
@@ -67,4 +118,25 @@ void Enemy::Approach() {
 void Enemy::Leave() {
 	// 移動（ベクトルを加算）
 	worldTransform_.translation_ += leaveSpeed_;
+}
+
+void Enemy::Fire() {
+	// 現在の座標をコピー
+	Vector3 position = worldTransform_.translation_;
+
+	// 弾の速度
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity(0, 0, -kBulletSpeed);
+
+	// 弾を生成し、初期化
+	EnemyBullet* newBullet = new EnemyBullet();
+	newBullet->Initialize(model_, position, velocity);
+
+	// 弾を登録する
+	bullets_.push_back(newBullet);
+}
+
+void Enemy::InitializeApproach() {
+	// 発射タイマーを初期化
+	fireTimer_ = kFireInterval;
 }
