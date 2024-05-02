@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include "LoadFile.h"
+#include "Player.h"
 
 Enemy::~Enemy() {
 	// bullets_の開放
@@ -125,8 +126,14 @@ void Enemy::Fire() {
 	Vector3 position = worldTransform_.translation_;
 
 	// 弾の速度
-	const float kBulletSpeed = 1.0f;
-	Vector3 velocity(0, 0, -kBulletSpeed);
+	const float kBulletSpeed = 0.02f;
+
+	// 敵キャラ->自キャラへの差分ベクトルを求める
+	Vector3 direction = player_->GetWorldPosition() - GetWorldPosition();
+	// ベクトルを正規化
+	MyMath::Normalize(direction);
+	// ベクトルの長さを、早さに合わせる
+	Vector3 velocity = direction * kBulletSpeed;
 
 	// 弾を生成し、初期化
 	EnemyBullet* newBullet = new EnemyBullet();
@@ -139,4 +146,14 @@ void Enemy::Fire() {
 void Enemy::InitializeApproach() {
 	// 発射タイマーを初期化
 	fireTimer_ = kFireInterval;
+}
+
+Vector3 Enemy::GetWorldPosition() { 
+	Vector3 worldPos; 
+	// ワールド行列の平行移動成分を取得
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
 }

@@ -9,6 +9,20 @@ Vector3 MyMath::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	};
 }
 
+float MyMath::Length(const Vector3& v) { 
+	return sqrtf(powf(v.x, 2) + powf(v.y, 2) + powf(v.z, 2)); 
+}
+
+Vector3 MyMath::Normalize(const Vector3& v) { 
+	float norm = Length(v);
+
+	return Vector3(
+		v.x / norm,
+		v.y / norm,
+		v.z / norm
+	);
+}
+
 Matrix4x4 MyMath::Multiply(const Matrix4x4& m1, const Matrix4x4 m2) { 
 	Matrix4x4 result = Identity();
 

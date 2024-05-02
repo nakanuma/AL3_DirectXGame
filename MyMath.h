@@ -11,6 +11,11 @@ public:
 	/// 
 	static Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
+	// 長さ（ノルム）
+	static float Length(const Vector3& v);
+	// 正規化
+	static Vector3 Normalize(const Vector3& v);
+
 	///
 	///	4x4行列
 	///

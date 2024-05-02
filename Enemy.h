@@ -5,6 +5,9 @@
 // MyClass
 #include "EnemyBullet.h"
 
+// 前方宣言
+class Player;
+
 // 行動フェーズ
 enum class Phase {
 	Approach, // 接近する
@@ -53,8 +56,22 @@ public:
 	/// </summary>
 	void Fire();
 
-	// 接近フェーズ初期化
+	/// <summary>
+	/// 接近フェーズ初期化
+	/// </summary>
 	void InitializeApproach();
+
+	/// <summary>
+	/// 外部からプレイヤーのアドレスを設定
+	/// </summary>
+	/// <param name="player">プレイヤーのポインタ</param>
+	void SetPlayer(Player* player) { player_ = player; }
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPosition();
 
 private:
 	///
@@ -93,4 +110,11 @@ private:
 	static const int kFireInterval = 60;
 	// 発射タイマー
 	int32_t fireTimer_ = 0;
+
+	///
+	/// その他
+	/// 
+	
+	// 自キャラ
+	Player* player_ = nullptr;
 };

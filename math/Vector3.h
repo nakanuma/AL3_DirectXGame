@@ -30,4 +30,18 @@ struct Vector3 final {
 
 	// Multiply
 	Vector3 operator*(float scalar) const { return {x * scalar, y * scalar, z * scalar}; }
+
+	Vector3& operator*=(const Vector3& other) { 
+		x *= other.x;
+		y *= other.y;
+		z *= other.z;
+		return *this;
+	}
+
+	Vector3& operator*=(const float& scalar) { 
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
+		return *this;
+	}
 };
