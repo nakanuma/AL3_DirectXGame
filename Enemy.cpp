@@ -10,6 +10,11 @@ Enemy::~Enemy() {
 	for (EnemyBullet* bullet : bullets_) {
 		delete bullet;
 	}
+
+	// timedCall_の開放
+	for (TimedCall* timedCall : timedCalls_) {
+		delete timedCall;
+	}
 }
 
 void Enemy::Initialize(Model* model, const Vector3& position) {
@@ -52,7 +57,7 @@ void Enemy::Update() {
 
 	///
 	///	攻撃処理
-	/// 
+	///
 
 	// 弾の更新
 	for (EnemyBullet* bullet : bullets_) {
@@ -68,14 +73,28 @@ void Enemy::Update() {
 		return false;
 	});
 
+	// 終了したタイマーを削除
+	timedCalls_.remove_if([](TimedCall* timedCall) {
+		if (timedCall->IsFinished()) {
+			delete timedCall;
+			return true;
+		}
+		return false;
+	});
+
+	// リストの全要素の更新を呼ぶ
+	for (TimedCall* timedCall : timedCalls_) {
+		timedCall->Update();
+	}
+
 	// 行列の更新
 	worldTransform_.UpdateMatrix();
 
 	//// デバッグ用
-	//ImGui::Begin("Enemy");
-	//ImGui::DragFloat3("approachSpeed", &approachSpeed_.x);
-	//ImGui::DragFloat3("leaveSpeed", &leaveSpeed_.x);
-	//ImGui::End();
+	// ImGui::Begin("Enemy");
+	// ImGui::DragFloat3("approachSpeed", &approachSpeed_.x);
+	// ImGui::DragFloat3("leaveSpeed", &leaveSpeed_.x);
+	// ImGui::End();
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
@@ -91,27 +110,19 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 void Enemy::Approach() {
 	///
 	///	移動
-	/// 
-	
+	///
+
 	worldTransform_.translation_ += approachSpeed_;
 
 	///
 	///	攻撃
-	/// 
-
-	// 発射タイマーをカウントダウン
-	fireTimer_--;
-	// 指定時間に達した
-	if (fireTimer_ <= 0) {
-		// 弾を発射
-		Fire();
-		// 発射タイマーを初期化
-		fireTimer_ = kFireInterval;
-	}
+	///
 
 	// 規定の位置に到達したら離脱
 	if (worldTransform_.translation_.z < 0.0f) {
 		phase_ = Phase::Leave;
+		// 登録済みの時限発動イベントリストをクリア
+		timedCalls_.clear();
 	}
 }
 
@@ -137,6 +148,14 @@ void Enemy::Fire() {
 }
 
 void Enemy::InitializeApproach() {
-	// 発射タイマーを初期化
-	fireTimer_ = kFireInterval;
+	// 発射タイマーをセットする
+	FireAndTimerReset();
+}
+
+void Enemy::FireAndTimerReset() {
+	// 弾を発射する
+	Fire();
+
+	// 発射タイマーをセットする
+	timedCalls_.push_back(new TimedCall(std::bind(&Enemy::FireAndTimerReset, this), kFireInterval));
 }

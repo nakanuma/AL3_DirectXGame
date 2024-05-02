@@ -4,6 +4,7 @@
 
 // MyClass
 #include "EnemyBullet.h"
+#include "TimedCall.h"
 
 // 行動フェーズ
 enum class Phase {
@@ -56,6 +57,11 @@ public:
 	// 接近フェーズ初期化
 	void InitializeApproach();
 
+	/// <summary>
+	/// 弾を発射し、タイマーをリセットするコールバック関数
+	/// </summary>
+	void FireAndTimerReset();
+
 private:
 	///
 	///	3Dモデル
@@ -93,4 +99,7 @@ private:
 	static const int kFireInterval = 60;
 	// 発射タイマー
 	int32_t fireTimer_ = 0;
+
+	// 時限発動のリスト
+	std::list<TimedCall*> timedCalls_;
 };
