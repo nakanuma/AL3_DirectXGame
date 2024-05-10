@@ -20,14 +20,23 @@ GameScene::~GameScene() {
 	// デバッグカメラの開放
 	delete debugCamera_;
 
+	// 天球の開放
+	delete skydome_;
+
 	// 3Dモデル（天球）の開放
 	delete modelSkydome_;
 
 	// 自キャラの開放
 	delete player_;
 
+	// 3Dモデル（自キャラ）の開放
+	delete modelPlayer_;
+
 	// マップチップフィールドの開放
 	delete mapChipField_;
+
+	// カメラコントローラの開放
+	delete cameraController_;
 }
 
 void GameScene::Initialize() {
