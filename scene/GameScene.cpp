@@ -20,14 +20,26 @@ GameScene::~GameScene() {
 	// デバッグカメラの開放
 	delete debugCamera_;
 
+	// 天球の開放
+	delete skydome_;
 	// 3Dモデル（天球）の開放
 	delete modelSkydome_;
 
 	// 自キャラの開放
 	delete player_;
+	// 3Dモデル（自キャラ）の開放
+	delete modelPlayer_;
+
+	// 敵キャラの開放
+	delete enemy_;
+	// 3Dモデル（敵キャラ）の開放
+	delete modelEnemy_;
 
 	// マップチップフィールドの開放
 	delete mapChipField_;
+
+	// カメラコントローラの開放
+	delete cameraController_;
 }
 
 void GameScene::Initialize() {
@@ -77,6 +89,14 @@ void GameScene::Initialize() {
 	// 自キャラのマップチップフィールド情報をセット
 	player_->SetMapChipField(mapChipField_);
 
+	// 3Dモデル（敵キャラ）の生成
+	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+	// 敵キャラの生成
+	enemy_ = new Enemy();
+	// 座標をマップチップ番号で指定
+	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(16, 18);
+	// 敵キャラの初期化
+	enemy_->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
 
 	// カメラコントローラの初期化
 	// 生成
@@ -107,6 +127,11 @@ void GameScene::Update() {
 
 	// 自キャラの更新
 	player_->Update();
+
+	// 敵キャラの更新
+	if (enemy_ != nullptr) {
+		enemy_->Update();
+	}
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
@@ -182,6 +207,11 @@ void GameScene::Draw() {
 
 	// 自キャラの描画
 	player_->Draw();
+
+	// 敵キャラの描画
+	if (enemy_ != nullptr) {
+		enemy_->Draw();
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

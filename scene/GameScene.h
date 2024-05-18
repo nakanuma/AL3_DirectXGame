@@ -14,6 +14,7 @@
 #include "MyMath.h"
 #include "Skydome.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "MapChipField.h"
 #include "CameraController.h"
 
@@ -88,6 +89,12 @@ private: // メンバ変数
 
 	// 3Dモデル（自キャラ）
 	Model* modelPlayer_ = nullptr;
+
+	// 敵キャラ
+	Enemy* enemy_ = nullptr;
+
+	// 3Dモデル（敵キャラ）
+	Model* modelEnemy_ = nullptr;
 
 	// マップチップフィールド
 	MapChipField* mapChipField_;
