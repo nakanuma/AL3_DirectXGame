@@ -48,6 +48,21 @@ public:
 	/// </summary>
 	Vector3 GetWorldPosition();
 
+	/// <summary>
+	/// 衝突を検知したら呼び出されるコールバック関数
+	/// </summary>
+	void OnCollision();
+
+	/// <summary>
+	/// 弾リストを取得
+	/// </summary>
+	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+
+	/// <summary>
+	/// 半径を取得
+	/// </summary>
+	float GetRadius() { return kRadius_; }
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -63,4 +78,7 @@ private:
 
 	// 弾
 	std::list<PlayerBullet*> bullets_;
+
+	// 半径
+	const float kRadius_ = 1.0f;
 };

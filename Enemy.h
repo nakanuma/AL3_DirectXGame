@@ -73,6 +73,21 @@ public:
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPosition();
 
+	/// <summary>
+	/// 衝突を検知したら呼び出されるコールバック関数
+	/// </summary>
+	void OnCollision();
+
+	/// <summary>
+	/// 弾リストを取得
+	/// </summary>
+	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+
+	/// <summary>
+	/// 半径を取得
+	/// </summary>
+	float GetRadius() { return kRadius_; }
+
 private:
 	///
 	///	3Dモデル
@@ -117,4 +132,7 @@ private:
 	
 	// 自キャラ
 	Player* player_ = nullptr;
+
+	// 半径
+	const float kRadius_ = 1.0f;
 };
