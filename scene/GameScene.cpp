@@ -15,6 +15,12 @@ GameScene::~GameScene() {
 	// 敵キャラの開放
 	delete enemy_;
 
+	// 天球の開放
+	delete skydome_;
+
+	// 天球の3Dモデルの開放
+	delete modelSkydome_;
+
 	// デバッグカメラの開放
 	delete debugCamera_;
 }
@@ -44,6 +50,13 @@ void GameScene::Initialize() {
 	// 敵キャラの初期化
 	enemy_->Initialize(model_, {16.0f, 2.0f, 30.0f}); // 一旦適当な値を設定
 
+	// 天球の3Dモデルの生成
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	// 天球の生成
+	skydome_ = new Skydome();
+	// 天球の初期化
+	skydome_->Initialize(modelSkydome_, &viewProjection_);
+
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(dxCommon_->GetBackBufferWidth(), dxCommon_->GetBackBufferWidth());
 
@@ -67,6 +80,9 @@ void GameScene::Update() {
 
 	// 衝突判定
 	CheckAllCollisions();
+
+	// 天球の更新
+	skydome_->Update();
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
@@ -125,6 +141,9 @@ void GameScene::Draw() {
 	if (enemy_) {
 		enemy_->Draw(viewProjection_);
 	}
+
+	// 天球の描画
+	skydome_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
