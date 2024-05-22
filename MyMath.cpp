@@ -1,5 +1,6 @@
 #include "MyMath.h"
 #include <math.h>
+#include <stdint.h>
 
 Vector3 MyMath::TransformNormal(const Vector3& v, const Matrix4x4& m) { 
 	return Vector3{
@@ -72,6 +73,50 @@ Matrix4x4 MyMath::Identity() {
 	result.m[3][2] = 0.0f;
 	result.m[3][3] = 1.0f;
 
+	return result;
+}
+
+Matrix4x4 MyMath::Inverse(Matrix4x4 matrix)
+{
+	Matrix4x4 result;
+	float temp[4][8] = {};
+
+	float a;
+
+	// 一時行列にコピー
+	for (int32_t i = 0; i < 4; i++) {
+		for (int32_t j = 0; j < 4; j++) {
+			temp[i][j] = matrix.m[i][j];
+
+			if (i == j)temp[i][4 + j] = 1;
+		}
+	}
+
+	for (int32_t k = 0; k < 4; k++) {
+		a = 1 / temp[k][k];
+
+		for (int32_t j = 0; j < 8; j++) {
+			temp[k][j] *= a;
+		}
+
+		for (int32_t i = 0; i < 4; i++) {
+			if (i == k) {
+				continue;
+			}
+
+			a = -temp[i][k];
+
+			for (int32_t j = 0; j < 8; j++) {
+				temp[i][j] += temp[k][j] * a;
+			}
+		}
+	}
+
+	for (int32_t i = 0; i < 4; i++) {
+		for (int32_t j = 0; j < 4; j++) {
+			result.m[i][j] = temp[i][4 + j];
+		}
+	}
 	return result;
 }
 

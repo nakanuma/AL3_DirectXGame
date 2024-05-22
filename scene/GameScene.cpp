@@ -2,6 +2,7 @@
 #include "AxisIndicator.h"
 #include "TextureManager.h"
 #include <cassert>
+#include "imgui.h"
 
 GameScene::GameScene() {}
 
@@ -23,6 +24,9 @@ GameScene::~GameScene() {
 
 	// デバッグカメラの開放
 	delete debugCamera_;
+
+	// レールカメラの開放
+	delete railCamera_;
 }
 
 void GameScene::Initialize() {
@@ -60,6 +64,11 @@ void GameScene::Initialize() {
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(dxCommon_->GetBackBufferWidth(), dxCommon_->GetBackBufferWidth());
 
+	// レールカメラの生成
+	railCamera_ = new RailCamera();
+	// レールカメラの初期化
+	railCamera_->Initialize(viewProjection_.translation_, viewProjection_.rotation_);
+
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
@@ -86,6 +95,21 @@ void GameScene::Update() {
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
+
+	// レールカメラのビュー行列とプロジェクション行列をコピー
+	viewProjection_.matView = railCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+
+	// レールカメラの更新
+	railCamera_->Update();
+
+	// デバッグ用表示
+	ImGui::Begin("debug");
+	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[0][0], 0.01f);
+	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[1][0], 0.01f);
+	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[2][0], 0.01f);
+	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[3][0], 0.01f);
+	ImGui::End();
 
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_RETURN)) {

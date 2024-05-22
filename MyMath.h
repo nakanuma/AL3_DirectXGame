@@ -25,6 +25,8 @@ public:
 	// 単位行列を書き込む
 	static Matrix4x4 Identity();
 
+	static Matrix4x4 Inverse(Matrix4x4 matrix);
+
 	static Matrix4x4 Scaling(Vector3 scale);
 
 	static Matrix4x4 Translation(Vector3 translation);
