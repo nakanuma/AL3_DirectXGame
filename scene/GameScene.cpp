@@ -96,12 +96,12 @@ void GameScene::Update() {
 	// デバッグカメラの更新
 	debugCamera_->Update();
 
+	// レールカメラの更新
+	railCamera_->Update();
+
 	// レールカメラのビュー行列とプロジェクション行列をコピー
 	viewProjection_.matView = railCamera_->GetViewProjection().matView;
 	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
-
-	// レールカメラの更新
-	railCamera_->Update();
 
 	// デバッグ用表示
 	ImGui::Begin("debug");
@@ -109,6 +109,8 @@ void GameScene::Update() {
 	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[1][0], 0.01f);
 	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[2][0], 0.01f);
 	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[3][0], 0.01f);
+	ImGui::DragFloat3("translate", &viewProjection_.translation_.x, 0.01f);
+	ImGui::DragFloat3("rotate", &viewProjection_.rotation_.x, 0.01f);
 	ImGui::End();
 
 #ifdef _DEBUG
