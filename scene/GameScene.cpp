@@ -3,7 +3,7 @@
 #include <cassert>
 #include "imgui.h"
 
-GameScene::GameScene() {}
+GameScene::GameScene() {} 
 
 GameScene::~GameScene() {
 	// 3Dモデルデータの開放
