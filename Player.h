@@ -3,7 +3,12 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-class MapChipField; // 前方宣言
+// MyClass
+#include "MyMath.h"
+
+// 前方宣言
+class MapChipField;
+class Enemy;
 
 // 左右
 enum class LRDirection {
@@ -74,6 +79,16 @@ public:
 	const Vector3& GetVelocity() const { return velocity_; }
 
 	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	Vector3 GetWorldPosition();
+
+	/// <summary>
+	/// AABBを取得
+	/// </summary>
+	AABB GetAABB();
+
+	/// <summary>
 	/// 外部からマップチップフィールドのポインタをセット
 	/// </summary>
 	/// <param name="mapChipField"></param>
@@ -107,6 +122,11 @@ public:
 	/// <param name="corner"></param>
 	/// <returns></returns>
 	Vector3 CornerPosition(const Vector3& center, Corner corner);
+
+	/// <summary>
+	/// 衝突応答
+	/// </summary>
+	void OnCollision(const Enemy* enemy);
 
 private:
 	// ワールド変換データ

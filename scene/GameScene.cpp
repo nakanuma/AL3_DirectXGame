@@ -3,6 +3,9 @@
 #include <cassert>
 #include "imgui.h"
 
+// MyClass
+#include "MyMath.h"
+
 GameScene::GameScene() {} 
 
 GameScene::~GameScene() {
@@ -31,7 +34,10 @@ GameScene::~GameScene() {
 	delete modelPlayer_;
 
 	// 敵キャラの開放
-	delete enemy_;
+	for (Enemy* enemy : enemies_) {
+		delete enemy;
+	}
+
 	// 3Dモデル（敵キャラ）の開放
 	delete modelEnemy_;
 
@@ -92,11 +98,13 @@ void GameScene::Initialize() {
 	// 3Dモデル（敵キャラ）の生成
 	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
 	// 敵キャラの生成
-	enemy_ = new Enemy();
-	// 座標をマップチップ番号で指定
-	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(16, 18);
-	// 敵キャラの初期化
-	enemy_->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
+	for (int32_t i = 0; i < kEnemyNum_; ++i) {
+		Enemy* newEnemy = new Enemy();
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(16 + (i * 4), 18); // 一体ずつ異なる座標をセット
+		newEnemy->Initialize(modelEnemy_, &viewProjection_, enemyPosition);
+
+		enemies_.push_back(newEnemy);
+	}
 
 	// カメラコントローラの初期化
 	// 生成
@@ -129,9 +137,14 @@ void GameScene::Update() {
 	player_->Update();
 
 	// 敵キャラの更新
-	if (enemy_ != nullptr) {
-		enemy_->Update();
+	for (Enemy* enemy : enemies_) {
+		if (enemy != nullptr) {
+			enemy->Update();
+		}
 	}
+
+	// 全ての当たり判定を行う
+	CheckAllCollisions();
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
@@ -209,8 +222,10 @@ void GameScene::Draw() {
 	player_->Draw();
 
 	// 敵キャラの描画
-	if (enemy_ != nullptr) {
-		enemy_->Draw();
+	for (Enemy* enemy : enemies_) {
+		if (enemy != nullptr) {
+			enemy->Draw();
+		}
 	}
 
 	// 3Dオブジェクト描画後処理
@@ -256,4 +271,42 @@ void GameScene::GenerateBlocks()
 			}
 		}
 	}
+}
+
+void GameScene::CheckAllCollisions()
+{
+#pragma region 自キャラと敵キャラの当たり判定
+	// 自キャラと敵キャラの当たり判定
+
+	// 判定対象1と2の座標
+	AABB aabb1, aabb2;
+
+	// 自キャラの座標
+	aabb1 = player_->GetAABB();
+
+	// 自キャラと敵キャラ全ての当たり判定
+	for (Enemy* enemy : enemies_) {
+		// 敵キャラの座標
+		aabb2 = enemy->GetAABB();
+
+		// AABB同士の交差判定
+		if (MyMath::IsCollision(aabb1, aabb2)) {
+			// 自キャラの衝突時コールバックを呼び出す
+			player_->OnCollision(enemy);
+			// 敵キャラの衝突時コールバックを呼び出す
+			enemy->OnCollision(player_);
+		}
+	}
+
+#pragma endregion
+
+#pragma region 自キャラとアイテムの当たり判定
+	// 自キャラとアイテムの当たり判定
+
+#pragma endregion
+
+#pragma region 自弾と敵キャラの当たり判定
+	// 自弾と敵キャラの当たり判定
+
+#pragma endregion
 }

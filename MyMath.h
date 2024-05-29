@@ -4,6 +4,12 @@
 #include "Vector4.h"
 #include "Matrix4x4.h"
 
+// AABB
+struct AABB {
+	Vector3 min;
+	Vector3 max;
+};
+
 class MyMath {
 public:
 	///
@@ -37,4 +43,11 @@ public:
 	static Vector3 Lerp(Vector3 a, Vector3 b, float t);
 
 	static float EaseInOutQuad(float t);
+
+	///
+	/// AABB
+	/// 
+	
+	// AABB同士の衝突判定
+	static bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 };
