@@ -28,11 +28,6 @@ void RailCamera::Update()
 
 	// カメラの座標を画面表示する処理
 	ImGui::Begin("Camera");
-	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[0][0], 0.01f);
-	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[1][0], 0.01f);
-	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[2][0], 0.01f);
-	ImGui::DragFloat4("viewProjection", &viewProjection_.matView.m[3][0], 0.01f);
-
 	ImGui::DragFloat3("translation", &worldTransform_.translation_.x, 0.01f);
 	ImGui::DragFloat3("rotation", &worldTransform_.rotation_.x, 0.01f);
 	ImGui::End();
