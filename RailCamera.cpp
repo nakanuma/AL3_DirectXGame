@@ -19,7 +19,7 @@ void RailCamera::Update()
 	// ワールドトランスフォームの座標の数値を加算したりする（移動）
 	worldTransform_.translation_.z -= 0.1f;
 	// ワールドトランスフォームの角度の数値を加算したりする（回転）
-	// 
+	worldTransform_.rotation_.y += 0.002f;
 	// ワールドトランスフォームのワールド行列再計算
 	worldTransform_.matWorld_ = MyMath::MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
