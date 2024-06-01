@@ -9,6 +9,8 @@ void RailCamera::Initialize(Vector3 translation, Vector3 rotation)
 	worldTransform_.translation_ = translation;
 	worldTransform_.rotation_ = rotation;
 	// ビュープロジェクションの初期化
+	// ビュープロジェクションのfarZを適切な値にする
+	viewProjection_.farZ = 2000.0f;
 	viewProjection_.Initialize();
 }
 
@@ -17,8 +19,9 @@ void RailCamera::Update()
 	// ワールドトランスフォームの座標の数値を加算したりする（移動）
 	worldTransform_.translation_.z -= 0.1f;
 	// ワールドトランスフォームの角度の数値を加算したりする（回転）
+	// 
 	// ワールドトランスフォームのワールド行列再計算
-	worldTransform_.UpdateMatrix();
+	worldTransform_.matWorld_ = MyMath::MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
 	// カメラオブジェクトのワールド行列からビュー行列を計算する
 	viewProjection_.matView = MyMath::Inverse(worldTransform_.matWorld_);

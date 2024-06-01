@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <type_traits>
 #include <wrl.h>
+#include <string>
 
 // 定数バッファ用データ構造体
 struct ConstBufferDataWorldTransform {
@@ -55,7 +56,6 @@ public:
 	/// 行列を計算・転送する
 	/// </summary>
 	void UpdateMatrix();
-
 private:
 	// 定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffer_;

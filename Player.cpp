@@ -12,7 +12,7 @@ Player::~Player() {
 	}
 }
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosition) {
 	// NULLポインタチェック
 	assert(model);
 
@@ -22,6 +22,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	// 引数で受け取った座標を設定
+	worldTransform_.translation_ = playerPosition;
 
 	// シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
@@ -133,7 +135,7 @@ void Player::Rotate() {
 void Player::Attack() {
 	if (input_->TriggerKey(DIK_SPACE)) {
 		// 自キャラの座標をコピー
-		Vector3 position = worldTransform_.translation_;
+		Vector3 position = GetWorldPosition();
 
 		// 弾の速度
 		const float kBulletSpeed = 1.0f;
@@ -162,3 +164,8 @@ Vector3 Player::GetWorldPosition() {
 }
 
 void Player::OnCollision() {}
+
+void Player::SetParent(const WorldTransform* parent) {
+	// 親子関係を結ぶ
+	worldTransform_.parent_ = parent;
+}
