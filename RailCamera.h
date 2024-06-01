@@ -11,7 +11,9 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Vector3 WorldPos, Vector3 radian);
+	/// <param name="translation">ワールド座標</param>
+	/// <param name="rotation">ラジアン</param>
+	void Initialize(Vector3 translation, Vector3 rotation);
 
 	/// <summary>
 	/// 更新
