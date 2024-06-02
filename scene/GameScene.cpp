@@ -45,6 +45,9 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
+	// レティクルのテクスチャ
+	TextureManager::Load("reticle.png");
+
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("uvChecker.png");
 
@@ -105,7 +108,7 @@ void GameScene::Update() {
 	railCamera_->Update();
 
 	// 自キャラの更新
-	player_->Update();
+	player_->Update(viewProjection_);
 
 	///
 	///	↓ ここから敵の更新処理
@@ -250,6 +253,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	// プレイヤーのUIを描画
+	player_->DrawUI();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

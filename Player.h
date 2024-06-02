@@ -3,6 +3,7 @@
 #include "WorldTransform.h"
 #include "Model.h"
 #include "Input.h"
+#include "Sprite.h"
 
 // MyClass
 #include "PlayerBullet.h"
@@ -25,13 +26,18 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(const ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(ViewProjection& viewProjection);
+
+	/// <summary>
+	/// UI描画
+	/// </summary>
+	void DrawUI();
 
 	/// <summary>
 	/// 旋回
@@ -87,4 +93,10 @@ private:
 
 	// 半径
 	const float kRadius_ = 1.0f;
+
+	// 3Dレティクル用ワールドトランスフォーム
+	WorldTransform worldTransform3DReticle_;
+
+	// 2Dレティクル用スプライト
+	Sprite* sprite2DReticle_ = nullptr;
 };
