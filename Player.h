@@ -75,6 +75,11 @@ public:
 	/// <param name="parent"></param>
 	void SetParent(const WorldTransform* parent);
 
+	/// <summary>
+	/// マウスカーソルのスクリーン座標からワールド座標を取得して3Dレティクル配置
+	/// </summary>
+	void Set3DReticleFromCursor(const ViewProjection& viewProjection);
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
