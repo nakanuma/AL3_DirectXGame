@@ -7,6 +7,7 @@
 
 // 前方宣言
 class Player;
+class GameScene;
 
 // 行動フェーズ
 enum class Phase {
@@ -81,12 +82,24 @@ public:
 	/// <summary>
 	/// 弾リストを取得
 	/// </summary>
-	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+	/*const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }*/
 
 	/// <summary>
 	/// 半径を取得
 	/// </summary>
 	float GetRadius() { return kRadius_; }
+
+	/// <summary>
+	/// ゲームシーンをセット
+	/// </summary>
+	/// <param name="gameScene">ゲームシーン</param>
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+
+	/// <summary>
+	/// デスフラグを取得
+	/// </summary>
+	/// <returns></returns>
+	bool GetDeathFlag() { return isDead_; }
 
 private:
 	///
@@ -119,7 +132,7 @@ private:
 	/// 
 
 	// 弾
-	std::list<EnemyBullet*> bullets_;
+	/*std::list<EnemyBullet*> bullets_;*/
 
 	// 発射間隔
 	static const int kFireInterval = 60;
@@ -130,9 +143,15 @@ private:
 	/// その他
 	/// 
 	
+	// ゲームシーン
+	GameScene* gameScene_ = nullptr;
+
 	// 自キャラ
 	Player* player_ = nullptr;
 
 	// 半径
 	const float kRadius_ = 1.0f;
+
+	// デスフラグ
+	bool isDead_ = false;
 };

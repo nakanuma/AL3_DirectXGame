@@ -5,12 +5,9 @@
 
 #include "LoadFile.h"
 #include "Player.h"
+#include "GameScene.h"
 
 Enemy::~Enemy() {
-	// bullets_の開放
-	for (EnemyBullet* bullet : bullets_) {
-		delete bullet;
-	}
 }
 
 void Enemy::Initialize(Model* model, const Vector3& position) {
@@ -54,21 +51,7 @@ void Enemy::Update() {
 	///
 	///	攻撃処理
 	/// 
-
-	// 弾の更新
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Update();
-	}
-
-	// デスフラグの立った弾を削除
-	bullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
-
+	
 	// 行列の更新
 	worldTransform_.UpdateMatrix();
 
@@ -82,11 +65,6 @@ void Enemy::Update() {
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	// モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-
-	// 弾描画
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Draw(viewProjection);
-	}
 }
 
 void Enemy::Approach() {
@@ -139,8 +117,9 @@ void Enemy::Fire() {
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, position, velocity);
 
-	// 弾を登録する
-	bullets_.push_back(newBullet);
+	// 弾をゲームシーンの敵弾リストに登録する
+	/*bullets_.push_back(newBullet);*/
+	gameScene_->AddEnemyBullet(newBullet);
 }
 
 void Enemy::InitializeApproach() {
@@ -158,4 +137,7 @@ Vector3 Enemy::GetWorldPosition() {
 	return worldPos;
 }
 
-void Enemy::OnCollision() {}
+void Enemy::OnCollision() {
+	// デスフラグをtrueにする
+	isDead_ = true;
+}
