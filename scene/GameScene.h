@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <memory>
 
 #include "Audio.h"
 #include "DirectXCommon.h"
@@ -10,6 +11,7 @@
 #include "WorldTransform.h"
 
 // MyClass
+#include "Player.h"
 
 /// <summary>
 /// ゲームシーン
@@ -51,4 +53,15 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 
+	// テクスチャハンドル
+	uint32_t textureHandle_ = 0;
+
+	// 3Dモデルデータ
+	std::unique_ptr<Model> model_ = nullptr;
+
+	// ビュープロジェクション
+	ViewProjection viewProjection_;
+
+	// 自キャラ
+	std::unique_ptr<Player> player_ = nullptr;
 };
