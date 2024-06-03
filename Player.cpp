@@ -265,8 +265,8 @@ void Player::Set3DReticleFromCursor(const ViewProjection& viewProjection) {
 
 
 	 // スクリーン座標
-	 Vector3 posNear = Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y, 0));
-	 Vector3 posFar = Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y, 1));
+	 Vector3 posNear = Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0);
+	 Vector3 posFar = Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1);
 
 	 // スクリーン座標系からワールド座標系へ
 	 posNear = MyMath::Transform(posNear, matInverseVPV);
@@ -278,10 +278,10 @@ void Player::Set3DReticleFromCursor(const ViewProjection& viewProjection) {
 	 // ベクトルの正規化
 	 mouseDirection = MyMath::Normalize(mouseDirection);
 	 // カメラから照準オブジェクトの距離
-	 const float kDistanceTestObject = 0.0f;
+	 const float kDistanceTestObject = 50.0f;
 	 worldTransform3DReticle_.translation_ = posNear + mouseDirection * kDistanceTestObject;
 	 // ワールド行列更新と転送
-	 worldTransform_.UpdateMatrix();
+	 worldTransform3DReticle_.UpdateMatrix();
 
 	 
 	 // デバッグ文字表示

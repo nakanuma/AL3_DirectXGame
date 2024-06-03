@@ -64,7 +64,7 @@ void GameScene::Initialize() {
 
 	// 自キャラの生成
 	player_ = new Player();
-	Vector3 playerPositon = {0.0f, 0.0f, 30.0f};
+	Vector3 playerPositon = {0.0f, 0.0f, 50.0f};
 	// 自キャラの初期化
 	player_->Initialize(model_, textureHandle_, playerPositon);
 	// 自キャラとレールカメラの親子関係を結ぶ
