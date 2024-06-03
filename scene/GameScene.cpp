@@ -19,17 +19,63 @@ void GameScene::Initialize() {
 	model_.reset(Model::Create());
 
 	// ビュープロジェクションの初期化
+	viewProjection_.farZ = 2000.0f;
 	viewProjection_.Initialize();
 
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 	// 自キャラの初期化
 	player_->Initialize(model_.get(), textureHandle_, &viewProjection_);
+
+	// デバッグカメラの生成
+	debugCamera_ = std::make_unique<DebugCamera>(dxCommon_->GetBackBufferWidth(), dxCommon_->GetBackBufferWidth());
+
+	// 天球の3Dモデルの生成
+	modelSkydome_.reset(Model::CreateFromOBJ("skydome", true));
+	// 天球の生成
+	skydome_ = std::make_unique<Skydome>();
+	// 天球の初期化
+	skydome_->Initialize(modelSkydome_.get(), &viewProjection_);
+
+	// 地面の3Dモデルの生成
+	modelGround_.reset(Model::CreateFromOBJ("ground", true));
+	// 地面の生成
+	ground_ = std::make_unique<Ground>();
+	// 地面の初期化
+	ground_->Initialize(modelGround_.get(), &viewProjection_);
 }
 
 void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
+
+	// 天球の更新
+	skydome_->Update();
+
+	// 地面の更新
+	ground_->Update();
+
+	// デバッグカメラの更新
+	debugCamera_->Update();
+
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_RETURN)) {
+		// デバッグカメラ有効フラグをトグル
+		isDebugCameraActive_ = !isDebugCameraActive_;
+	}
+
+	// デバッグカメラの処理
+	if (isDebugCameraActive_) {
+		// デバッグカメラの更新
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		// ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+	} else {
+		// ビュープロジェクション行列の更新と転送
+		viewProjection_.TransferMatrix();
+	}
+#endif
 }
 
 void GameScene::Draw() {
@@ -61,6 +107,12 @@ void GameScene::Draw() {
 
 	// 自キャラの描画
 	player_->Draw();
+
+	// 天球の描画
+	skydome_->Draw();
+
+	// 地面の描画
+	ground_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
