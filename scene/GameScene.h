@@ -65,6 +65,8 @@ private: // メンバ変数
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
 
+	// 自キャラの3Dモデル
+	std::unique_ptr<Model> modelPlayer_ = nullptr;
 	// 自キャラ
 	std::unique_ptr<Player> player_ = nullptr;
 

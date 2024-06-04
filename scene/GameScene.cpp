@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "AxisIndicator.h"
 #include "TextureManager.h"
 #include <cassert>
 
@@ -22,10 +23,12 @@ void GameScene::Initialize() {
 	viewProjection_.farZ = 2000.0f;
 	viewProjection_.Initialize();
 
+	// 自キャラの3Dモデルの生成
+	modelPlayer_.reset(Model::CreateFromOBJ("player", true));
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 	// 自キャラの初期化
-	player_->Initialize(model_.get(), textureHandle_, &viewProjection_);
+	player_->Initialize(modelPlayer_.get(), &viewProjection_);
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(dxCommon_->GetBackBufferWidth(), dxCommon_->GetBackBufferWidth());
@@ -43,6 +46,11 @@ void GameScene::Initialize() {
 	ground_ = std::make_unique<Ground>();
 	// 地面の初期化
 	ground_->Initialize(modelGround_.get(), &viewProjection_);
+
+	// 軸方向表示の表示を有効にする
+	AxisIndicator::GetInstance()->SetVisible(true);
+	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 }
 
 void GameScene::Update() {
