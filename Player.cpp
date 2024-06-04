@@ -53,40 +53,29 @@ void Player::Update(const ViewProjection& viewProjection) {
 	///
 	///	3Dレティクルの配置
 	/// 
+	
+	// キャラクターの移動ベクトル
+	Vector3 move = {0.0f, 0.0f, 0.0f};
 
-	//// 自機のワールド座標から3Dレティクルのワールド座標を計算
-	//// 自機から3Dレティクルへの距離
-	//const float kDistancePlayerTo3DReticle = 50.0f;
-	//// 自機から3Dレティクルへのオフセット（Z+向き）
-	//Vector3 offset = {0, 0, 1.0f};
-	//// 自機のワールド行列の回転を反映
-	//offset = MyMath::Multiply(offset, worldTransform_.matWorld_);
-	//// ベクトルの長さを整える
-	//offset = MyMath::Normalize(offset) * kDistancePlayerTo3DReticle;
-	//// 3Dレティクルの座標を設定
-	//worldTransform3DReticle_.translation_ = worldTransform_.translation_ + offset;
-	//worldTransform3DReticle_.UpdateMatrix();
+	// キャラクターの移動速度
+	const float kCharacterSpeed = 0.2f;
 
+	// スプライトの現在座標を取得
+	Vector2 spritePosition = sprite2DReticle_->GetPosition();
 
-	//// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
-	//// 3Dレティクルのワールド行列から、ワールド座標を取得
-	//Vector3 positionReticle = {
-	//	worldTransform3DReticle_.matWorld_.m[3][0], 
-	//	worldTransform3DReticle_.matWorld_.m[3][1], 
-	//	worldTransform3DReticle_.matWorld_.m[3][2]
-	//};
-	//// ビューポート行列
-	//Matrix4x4 matViewport = MyMath::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+	// ゲームパッドの状態を得る変数
+	XINPUT_STATE joyState;
 
-	//// ビュー行列とプロジェクション行列、ビューポート行列を合成する
-	//Matrix4x4 matViewProjectionViewport = 
-	//	MyMath::Multiply(MyMath::Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
+	// ゲームパッド状態取得
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		move.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
+		move.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
 
-	//// ワールド->スクリーン座標変換
-	//positionReticle = MyMath::Transform(positionReticle, matViewProjectionViewport);
-
-	//// スプライトのレティクルに座標設定
-	//sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+		spritePosition.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * 5.0f;
+		spritePosition.y -= (float)joyState.Gamepad.sThumbRY / SHRT_MAX * 5.0f;
+		// スプライトの座標変更を反映
+		sprite2DReticle_->SetPosition(spritePosition);
+	}
 
 	// マウスカーソルのスクリーン座標からワールド座標を取得して3Dレティクル配置
 	Set3DReticleFromCursor(viewProjection);
@@ -95,25 +84,25 @@ void Player::Update(const ViewProjection& viewProjection) {
 	///	移動処理
 	///
 
-	// キャラクターの移動ベクトル
-	Vector3 move = {0.0f, 0.0f, 0.0f};
+	//// キャラクターの移動ベクトル
+	//Vector3 move = {0.0f, 0.0f, 0.0f};
 
-	// キャラクターの移動速度
-	const float kCharacterSpeed = 0.2f;
+	//// キャラクターの移動速度
+	//const float kCharacterSpeed = 0.2f;
 
-	// 押した方向で移動ベクトルを変更（左右）
-	if (input_->PushKey(DIK_LEFT)) {
-		move.x -= kCharacterSpeed;
-	} else if (input_->PushKey(DIK_RIGHT)) {
-		move.x += kCharacterSpeed;
-	}
+	//// 押した方向で移動ベクトルを変更（左右）
+	//if (input_->PushKey(DIK_LEFT)) {
+	//	move.x -= kCharacterSpeed;
+	//} else if (input_->PushKey(DIK_RIGHT)) {
+	//	move.x += kCharacterSpeed;
+	//}
 
-	// 押した方向で移動ベクトルを変更（上下）
-	if (input_->PushKey(DIK_UP)) {
-		move.y += kCharacterSpeed;
-	} else if (input_->PushKey(DIK_DOWN)) {
-		move.y -= kCharacterSpeed;
-	}
+	//// 押した方向で移動ベクトルを変更（上下）
+	//if (input_->PushKey(DIK_UP)) {
+	//	move.y += kCharacterSpeed;
+	//} else if (input_->PushKey(DIK_DOWN)) {
+	//	move.y -= kCharacterSpeed;
+	//}
 
 	// 座標移動（ベクトルの加算）
 	worldTransform_.translation_ += move;
@@ -169,6 +158,8 @@ void Player::Update(const ViewProjection& viewProjection) {
 	ImGui::Begin("Player");
 	ImGui::DragFloat3("translation", &worldTransform_.translation_.x, kCharacterSpeed);
 	ImGui::DragFloat2("spritePositon", &worldTransform3DReticle_.translation_.x, 0.01f);
+	Vector3 worldPos = GetWorldPosition();
+	ImGui::DragFloat3("worldPos", &worldPos.x, 0.01f);
 	ImGui::End();
 }
 
@@ -199,7 +190,15 @@ void Player::Rotate() {
 }
 
 void Player::Attack() {
-	if (input_->TriggerKey(DIK_SPACE)) {
+	XINPUT_STATE joyState;
+
+	// ゲームパッド未接続なら何もせず抜ける
+	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
+		return;
+	}
+
+	// Rトリガーを押していたら
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 		// 自キャラの座標をコピー
 		Vector3 position = GetWorldPosition();
 
@@ -241,17 +240,19 @@ void Player::SetParent(const WorldTransform* parent) {
 }
 
 void Player::Set3DReticleFromCursor(const ViewProjection& viewProjection) {
-	POINT mousePosition;
-	// マウス座標（スクリーン座標を取得する
-	GetCursorPos(&mousePosition);
+	// 2Dレティクルの座標を取得 
+	Vector2 spritePosition = sprite2DReticle_->GetPosition();
 
-	// クライアントエリア領域に変換する
-	HWND hwnd = WinApp::GetInstance()->GetHwnd();
-	ScreenToClient(hwnd, &mousePosition);
+	//POINT mousePosition;
+	//// マウス座標（スクリーン座標）を取得する
+	//GetCursorPos(&mousePosition);
 
-	// マウス座標を2Dレティクルのスプライトに代入する
-	sprite2DReticle_->SetPosition(Vector2(static_cast<float>(mousePosition.x), static_cast<float> (mousePosition.y)));
+	//// クライアントエリア領域に変換する
+	//HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	//ScreenToClient(hwnd, &mousePosition);
 
+	//// マウス座標を2Dレティクルのスプライトに代入する
+	//sprite2DReticle_->SetPosition(Vector2(static_cast<float>(mousePosition.x), static_cast<float> (mousePosition.y)));
 	
 	// ビューポート行列
 	 Matrix4x4 matViewport = MyMath::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
@@ -265,8 +266,8 @@ void Player::Set3DReticleFromCursor(const ViewProjection& viewProjection) {
 
 
 	 // スクリーン座標
-	 Vector3 posNear = Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0);
-	 Vector3 posFar = Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1);
+	 Vector3 posNear = Vector3(static_cast<float>(spritePosition.x), static_cast<float>(spritePosition.y), 0);
+	 Vector3 posFar = Vector3(static_cast<float>(spritePosition.x), static_cast<float>(spritePosition.y), 1);
 
 	 // スクリーン座標系からワールド座標系へ
 	 posNear = MyMath::Transform(posNear, matInverseVPV);
@@ -278,7 +279,7 @@ void Player::Set3DReticleFromCursor(const ViewProjection& viewProjection) {
 	 // ベクトルの正規化
 	 mouseDirection = MyMath::Normalize(mouseDirection);
 	 // カメラから照準オブジェクトの距離
-	 const float kDistanceTestObject = 50.0f;
+	 const float kDistanceTestObject = 100.0f;
 	 worldTransform3DReticle_.translation_ = posNear + mouseDirection * kDistanceTestObject;
 	 // ワールド行列更新と転送
 	 worldTransform3DReticle_.UpdateMatrix();

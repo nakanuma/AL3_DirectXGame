@@ -70,16 +70,6 @@ void GameScene::Initialize() {
 	// 自キャラとレールカメラの親子関係を結ぶ
 	player_->SetParent(&railCamera_->GetWorldTransform());
 
-	//// 敵キャラの生成
-	//for (int32_t i = 0; i < kEnemyNum_; ++i) {
-	//	Enemy* newEnemy = new Enemy();
-	//	Vector3 enemyPosition = {16.0f + (i * 10.0f), 2.0f, 30.0f}; // 一旦適当な値を設定
-	//	newEnemy->Initialize(model_, enemyPosition);
-	//	newEnemy->SetPlayer(player_); // 敵キャラに自キャラのアドレスを渡す
-	//	newEnemy->SetGameScene(this); // 敵キャラにゲームシーンを渡す
-
-	//	enemys_.push_back(newEnemy);
-	//}
 
 	// 敵の情報をファイルから読み込む
 	LoadEnemyPopData();

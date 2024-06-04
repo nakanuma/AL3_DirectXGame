@@ -2,6 +2,9 @@
 #include <math.h>
 #include <stdint.h>
 #include <cassert>
+#include <iostream>
+#include <array>
+#include <algorithm>
 
 Vector3 MyMath::Multiply(const float& scalar, const Vector3& v) {
 	Vector3 result;
