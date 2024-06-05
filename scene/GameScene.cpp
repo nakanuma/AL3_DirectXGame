@@ -47,6 +47,16 @@ void GameScene::Initialize() {
 	// 地面の初期化
 	ground_->Initialize(modelGround_.get(), &viewProjection_);
 
+	// 追従カメラの生成
+	followCamera_ = std::make_unique<FollowCamera>();
+	// 追従カメラの初期化
+	followCamera_->Initialize();
+	// 自キャラのワールドトランスフォームを追従カメラにセット
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+
+	// 自キャラに追従カメラのビュープロジェクションをアドレス渡し
+	player_->SetViewProjection(&followCamera_.get()->GetViewProjection());
+
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
@@ -65,6 +75,12 @@ void GameScene::Update() {
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
+
+	// 追従カメラの更新
+	followCamera_->Update();
+	// 追従カメラの行列をゲームシーンのビュープロジェクションにコピー
+	viewProjection_.matView = followCamera_.get()->GetViewProjection().matView;
+	viewProjection_.matProjection = followCamera_.get()->GetViewProjection().matProjection;
 
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_RETURN)) {

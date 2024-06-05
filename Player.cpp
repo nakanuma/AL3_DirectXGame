@@ -42,12 +42,14 @@ void Player::Update()
 		// ゼロ除算や無限大への演算を避ける
 		if (move.x != 0.0f || move.z != 0.0f) {
 			// 移動量に速さを反映
-			move = MyMath::Multiply(speed, MyMath::Normalize(move));
+			move = MyMath::Normalize(MyMath::Multiply(speed, MyMath::Normalize(move)));
 
-			// 移動
-			worldTransform_.translation_.x += move.x;
-			worldTransform_.translation_.z += move.z;
+			// 移動ベクトルをカメラの角度だけ回転する
+			move = MyMath::Add(move, viewProjection_->rotation_);
 		}
+
+		// 移動方向と自キャラの向きを合わせる（Y軸周り角度）
+		worldTransform_.rotation_.y = std::atan2(move.x, move.z);
 
 		// 移動
 		worldTransform_.translation_.x += move.x;

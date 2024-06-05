@@ -21,6 +21,18 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ワールドトランスフォームを取得
+	/// </summary>
+	/// <returns>ワールドトランスフォーム</returns>
+	const WorldTransform& GetWorldTransform() { return worldTransform_; }
+
+	/// <summary>
+	/// カメラのビュープロジェクションをセット
+	/// </summary>
+	/// <param name="viewProjection">ビュープロジェクション</param>
+	void SetViewProjection(const ViewProjection* viewProjection) { cameraViewProjection_ = viewProjection; }
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -30,5 +42,8 @@ private:
 
 	// ビュープロジェクション
 	ViewProjection* viewProjection_ = nullptr;
+
+	// カメラのビュープロジェクション
+	const ViewProjection* cameraViewProjection_ = nullptr;
 };
 

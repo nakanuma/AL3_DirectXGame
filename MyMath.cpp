@@ -3,8 +3,20 @@
 #include <array>
 #include <cassert>
 #include <iostream>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <stdint.h>
+
+Vector3 MyMath::Add(const Vector3& v1, const Vector3& v2)
+{
+	Vector3 result;
+
+	result.x = v1.x + v2.x;
+	result.y = v1.y + v2.y;
+	result.z = v1.z + v2.z;
+
+	return result;
+}
 
 Vector3 MyMath::Multiply(const float& scalar, const Vector3& v) {
 	Vector3 result;
@@ -27,7 +39,11 @@ Vector3 MyMath::Multiply(const Vector3& v, const Matrix4x4& m) {
 }
 
 Vector3 MyMath::TransformNormal(const Vector3& v, const Matrix4x4& m) {
-	return Vector3{v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0], v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1], v.x * m.m[0][2] + v.y + m.m[1][2] + v.z * m.m[2][2]};
+	return Vector3{
+		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0], 
+		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1], 
+		v.x * m.m[0][2] + v.y + m.m[1][2] + v.z * m.m[2][2]
+	};
 }
 
 float MyMath::Length(const Vector3& v) { return sqrtf(powf(v.x, 2) + powf(v.y, 2) + powf(v.z, 2)); }
@@ -247,4 +263,9 @@ Matrix4x4 MyMath::MakeViewportMatrix(float left, float top, float width, float h
 	result.m[3][3] = 1.0f;
 
 	return result;
+}
+
+float MyMath::DegToRad(float deg)
+{
+	return static_cast<float>(deg * (M_PI / 180));
 }
