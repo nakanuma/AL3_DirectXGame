@@ -1,22 +1,46 @@
 #include "Player.h"
 #include <cassert>
+#include <numbers>
+
 #include "Input.h"
 #include "imgui.h"
 
 // MyClass
 #include "MyMath.h"
 
-void Player::Initialize(Model* model, ViewProjection* viewProjection)
+void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm, ViewProjection* viewProjection)
 {
 	// NULLポインタチェック
-	assert(model);
+	assert(modelBody);
+	assert(modelHead);
+	assert(modelL_arm);
+	assert(modelR_arm);
 
 	// 引数として受け取ったデータをメンバ変数に記録する
-	model_ = model;
+	modelBody_ = modelBody;
+	modelHead_ = modelHead;
+	modelL_arm_ = modelL_arm;
+	modelR_arm_ = modelR_arm;
+
 	viewProjection_ = viewProjection;
 
 	// ワールド変換の初期化
-	worldTransform_.Initialize();
+	worldTransformBody_.Initialize();
+	worldTransformHead_.Initialize();
+	worldTransformL_arm_.Initialize();
+	worldTransformL_arm_.translation_ = { -1.2f,1.8f,0.0f }; // 初期位置を変更
+	worldTransformR_arm_.Initialize();
+	worldTransformR_arm_.translation_ = { 1.2f,1.8f,0.0f }; // 初期位置を変更
+
+	// 全てのパーツ同士の親子関係を結ぶ（Bodyが親になるように設定）
+	worldTransformHead_.parent_ = &worldTransformBody_;
+	worldTransformL_arm_.parent_ = &worldTransformBody_;
+	worldTransformR_arm_.parent_ = &worldTransformBody_;
+
+	// 浮遊ギミック初期化
+	InitializeFloatingGimmick();
+	// 腕振りギミック初期化
+	InitializeArmSwingGimmick();
 }
 
 void Player::Update()
@@ -49,24 +73,92 @@ void Player::Update()
 		}
 
 		// 移動方向と自キャラの向きを合わせる（Y軸周り角度）
-		worldTransform_.rotation_.y = std::atan2(move.x, move.z);
+		worldTransformBody_.rotation_.y = std::atan2(move.x, move.z);
 
 		// 移動
-		worldTransform_.translation_.x += move.x;
-		worldTransform_.translation_.z += move.z;
+		worldTransformBody_.translation_.x += move.x;
+		worldTransformBody_.translation_.z += move.z;
 	}
 
+	// 浮遊ギミック更新
+	UpdateFloatingGimmick();
+	// 腕振りギミック更新
+	UpdateArmSwingGimmick();
+
 	// 行列を更新
-	worldTransform_.UpdateMatrix();
+	worldTransformBody_.UpdateMatrix();
+	worldTransformHead_.UpdateMatrix();
+	worldTransformL_arm_.UpdateMatrix();
+	worldTransformR_arm_.UpdateMatrix();
 
 	// デバッグ用
 	ImGui::Begin("Player");
-	ImGui::Text("%.f, %.f, %.f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	ImGui::Text("worldTransformBody : %.f, %.f, %.f", 
+		worldTransformBody_.translation_.x, worldTransformBody_.translation_.y, worldTransformBody_.translation_.z
+	);
+	ImGui::Text("worldTransformHead : %.f, %.f, %.f",
+		worldTransformHead_.translation_.x, worldTransformHead_.translation_.y, worldTransformHead_.translation_.z
+	);
 	ImGui::End();
 }
 
 void Player::Draw()
 {
 	// 3Dモデルを描画
-	model_->Draw(worldTransform_, *viewProjection_, nullptr);
+	modelBody_->Draw(worldTransformBody_, *viewProjection_, nullptr);
+	modelHead_->Draw(worldTransformHead_, *viewProjection_, nullptr);
+	modelL_arm_->Draw(worldTransformL_arm_, *viewProjection_, nullptr);
+	modelR_arm_->Draw(worldTransformR_arm_, *viewProjection_, nullptr);
+}
+
+void Player::InitializeFloatingGimmick()
+{
+	// 浮遊ギミックの媒介変数
+	floatingParameter_ = 0.0f;
+}
+
+void Player::UpdateFloatingGimmick()
+{
+	// 浮遊移動のサイクル<frame>
+	uint16_t period = 60;
+	// 1フレームでのパラメータ加算値
+	const float step = 2.0f * std::numbers::pi_v<float> / period;
+	// パラメータを1ステップ分加算
+	floatingParameter_ += step;
+	// 2πを超えたら0に戻す
+	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * std::numbers::pi_v<float>);
+	// 浮遊の振幅
+	float floatingAmplitude_ = 0.5f;
+	// 浮遊を座標に反映
+	worldTransformBody_.translation_.y = std::sin(floatingParameter_) * floatingAmplitude_;
+
+	ImGui::Begin("Player");
+	ImGui::DragFloat3("Head Translation", &worldTransformHead_.translation_.x, 0.01f);
+	ImGui::DragFloat3("ArmL Translation", &worldTransformL_arm_.translation_.x, 0.01f);
+	ImGui::DragFloat3("ArmR Translation", &worldTransformR_arm_.translation_.x, 0.01f);
+	ImGui::DragInt("Period", reinterpret_cast<int*>(&period), 1);
+	ImGui::DragFloat("floatingAmplitude", &floatingAmplitude_, 0.1f);
+	ImGui::End();
+}
+
+void Player::InitializeArmSwingGimmick()
+{
+	armSwingParameter_ = 0.0f;
+}
+
+void Player::UpdateArmSwingGimmick()
+{
+	// 腕振りのサイクル<frame>
+	const uint16_t period = 60;
+	// 1フレームでのパラメータ加算値
+	const float step = 2.0f * std::numbers::pi_v<float> / period;
+	// パラメータを1ステップ分加算
+	armSwingParameter_ += step;
+	// 2πを超えたら0に戻す
+	armSwingParameter_ = std::fmod(armSwingParameter_, 2.0f * std::numbers::pi_v<float>);
+	// 腕振りの振幅
+	const float armSwingAmplitude_ = 0.5f;
+	// 回転角に反映
+	worldTransformL_arm_.rotation_.x = std::sin(armSwingParameter_) * armSwingAmplitude_;
+	worldTransformR_arm_.rotation_.x = std::sin(armSwingParameter_) * armSwingAmplitude_;
 }

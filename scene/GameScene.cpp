@@ -24,11 +24,21 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 	// 自キャラの3Dモデルの生成
-	modelPlayer_.reset(Model::CreateFromOBJ("player", true));
+	/*modelPlayer_.reset(Model::CreateFromOBJ("player", true));*/
+
+	modelFighterBody_.reset(Model::CreateFromOBJ("float_Body", true));
+	modelFighterHead_.reset(Model::CreateFromOBJ("float_Head", true));
+	modelFighterL_arm_.reset(Model::CreateFromOBJ("float_L_arm", true));
+	modelFighterR_arm_.reset(Model::CreateFromOBJ("float_R_arm", true));
+
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
+
 	// 自キャラの初期化
-	player_->Initialize(modelPlayer_.get(), &viewProjection_);
+	player_->Initialize(
+		modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(), modelFighterR_arm_.get(),
+		&viewProjection_
+	);
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(dxCommon_->GetBackBufferWidth(), dxCommon_->GetBackBufferWidth());
@@ -52,7 +62,7 @@ void GameScene::Initialize() {
 	// 追従カメラの初期化
 	followCamera_->Initialize();
 	// 自キャラのワールドトランスフォームを追従カメラにセット
-	followCamera_->SetTarget(&player_->GetWorldTransform());
+	followCamera_->SetTarget(&player_->GetWorldTransformBody());
 
 	// 自キャラに追従カメラのビュープロジェクションをアドレス渡し
 	player_->SetViewProjection(&followCamera_.get()->GetViewProjection());

@@ -9,7 +9,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Model* model, ViewProjection* viewProjection);
+	void Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm, ViewProjection* viewProjection);
 
 	/// <summary>
 	/// 更新
@@ -25,7 +25,7 @@ public:
 	/// ワールドトランスフォームを取得
 	/// </summary>
 	/// <returns>ワールドトランスフォーム</returns>
-	const WorldTransform& GetWorldTransform() { return worldTransform_; }
+	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
 
 	/// <summary>
 	/// カメラのビュープロジェクションをセット
@@ -33,17 +33,48 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void SetViewProjection(const ViewProjection* viewProjection) { cameraViewProjection_ = viewProjection; }
 
+	/// <summary>
+	/// 浮遊ギミック初期化
+	/// </summary>
+	void InitializeFloatingGimmick();
+
+	/// <summary>
+	/// 浮遊ギミック更新
+	/// </summary>
+	void UpdateFloatingGimmick();
+
+	/// <summary>
+	/// 腕振りギミック初期化
+	/// </summary>
+	void InitializeArmSwingGimmick();
+
+	/// <summary>
+	/// 腕振りギミック更新
+	/// </summary>
+	void UpdateArmSwingGimmick();
+
 private:
 	// ワールド変換データ
-	WorldTransform worldTransform_;
+	WorldTransform worldTransformBody_;
+	WorldTransform worldTransformHead_;
+	WorldTransform worldTransformL_arm_;
+	WorldTransform worldTransformR_arm_;
 
 	// モデル
-	Model* model_ = nullptr;
+	Model* modelBody_ = nullptr;
+	Model* modelHead_ = nullptr;
+	Model* modelL_arm_ = nullptr;
+	Model* modelR_arm_ = nullptr;
 
 	// ビュープロジェクション
 	ViewProjection* viewProjection_ = nullptr;
 
 	// カメラのビュープロジェクション
 	const ViewProjection* cameraViewProjection_ = nullptr;
+
+	// 浮遊ギミックの媒介変数
+	float floatingParameter_ = 0.0f;
+	// 腕振りギミックの媒介変数
+	float armSwingParameter_ = 0.0f;
 };
 

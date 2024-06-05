@@ -67,7 +67,13 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 
 	// 自キャラの3Dモデル
-	std::unique_ptr<Model> modelPlayer_ = nullptr;
+	/*std::unique_ptr<Model> modelPlayer_ = nullptr;*/
+
+	std::unique_ptr<Model> modelFighterBody_;
+	std::unique_ptr<Model> modelFighterHead_;
+	std::unique_ptr<Model> modelFighterL_arm_;
+	std::unique_ptr<Model> modelFighterR_arm_;
+
 	// 自キャラ
 	std::unique_ptr<Player> player_ = nullptr;
 
