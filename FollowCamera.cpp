@@ -31,7 +31,10 @@ void FollowCamera::Update()
 		offset = MyMath::TransformNormal(offset, rotationMatrix);
 
 		// 座標をコピーしてオフセット分ずらす
-		viewProjection_.translation_ = MyMath::Add(target_->translation_, offset);
+		viewProjection_.translation_ = MyMath::Add(
+			{ target_->translation_.x, 0.0f, target_->translation_.z },
+			offset
+		);
 	}
 
 	///

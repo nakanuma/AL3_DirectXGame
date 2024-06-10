@@ -115,28 +115,28 @@ void Player::InitializeFloatingGimmick()
 {
 	// 浮遊ギミックの媒介変数
 	floatingParameter_ = 0.0f;
+	// デフォルトのサイクル
+	period_ = 60;
+	// デフォルトの振幅
+	floatingAmplitude_ = 0.5f;
 }
 
 void Player::UpdateFloatingGimmick()
 {
-	// 浮遊移動のサイクル<frame>
-	uint16_t period = 60;
 	// 1フレームでのパラメータ加算値
-	const float step = 2.0f * std::numbers::pi_v<float> / period;
+	const float step = 2.0f * std::numbers::pi_v<float> / period_;
 	// パラメータを1ステップ分加算
 	floatingParameter_ += step;
 	// 2πを超えたら0に戻す
 	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * std::numbers::pi_v<float>);
-	// 浮遊の振幅
-	float floatingAmplitude_ = 0.5f;
 	// 浮遊を座標に反映
-	worldTransformBody_.translation_.y = std::sin(floatingParameter_) * floatingAmplitude_;
+	worldTransformBody_.translation_.y = 1.0f + std::sin(floatingParameter_) * floatingAmplitude_;
 
 	ImGui::Begin("Player");
 	ImGui::DragFloat3("Head Translation", &worldTransformHead_.translation_.x, 0.01f);
 	ImGui::DragFloat3("ArmL Translation", &worldTransformL_arm_.translation_.x, 0.01f);
 	ImGui::DragFloat3("ArmR Translation", &worldTransformR_arm_.translation_.x, 0.01f);
-	ImGui::DragInt("Period", reinterpret_cast<int*>(&period), 1);
+	ImGui::DragInt("Period", reinterpret_cast<int*>(&period_), 1);
 	ImGui::DragFloat("floatingAmplitude", &floatingAmplitude_, 0.1f);
 	ImGui::End();
 }

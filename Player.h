@@ -76,5 +76,10 @@ private:
 	float floatingParameter_ = 0.0f;
 	// 腕振りギミックの媒介変数
 	float armSwingParameter_ = 0.0f;
+
+	// 浮遊移動のサイクル<frame>
+	uint16_t period_;
+	// 浮遊の振幅
+	float floatingAmplitude_;
 };
 
