@@ -17,6 +17,7 @@
 #include "Enemy.h"
 #include "MapChipField.h"
 #include "CameraController.h"
+#include "DeathParticles.h"
 
 /// <summary>
 /// ゲームシーン
@@ -110,4 +111,9 @@ private: // メンバ変数
 
 	// カメラの移動可能範囲
 	Rect movableArea_ = {22, 1000, 12, 12};
+
+	// 死亡時パーティクル
+	DeathParticles* deathParticles_ = nullptr;
+	// 死亡時パーティクルモデル
+	Model* modelDeathParticle_ = nullptr;
 };

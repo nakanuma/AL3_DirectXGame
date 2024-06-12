@@ -46,6 +46,14 @@ GameScene::~GameScene() {
 
 	// カメラコントローラの開放
 	delete cameraController_;
+
+	
+	// 死亡時パーティクルの開放
+	if (deathParticles_) {
+		delete deathParticles_;
+	}
+	// 3Dモデル（死亡時パーティクル）の開放
+	delete modelDeathParticle_;
 }
 
 void GameScene::Initialize() {
@@ -89,7 +97,7 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = new Player();
 	// 座標をマップチップ番号で指定
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(4, 16);
 	// 自キャラの初期化
 	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 	// 自キャラのマップチップフィールド情報をセット
@@ -105,6 +113,12 @@ void GameScene::Initialize() {
 
 		enemies_.push_back(newEnemy);
 	}
+
+	// 3Dモデル（死亡時パーティクル）の生成
+	modelDeathParticle_ = Model::CreateFromOBJ("deathParticle", true);
+	// 仮の生成処理
+	deathParticles_ = new DeathParticles;
+	deathParticles_->Initialize(modelDeathParticle_, &viewProjection_, player_->GetWorldTransform().translation_);
 
 	// カメラコントローラの初期化
 	// 生成
@@ -135,6 +149,11 @@ void GameScene::Update() {
 
 	// 自キャラの更新
 	player_->Update();
+
+	// 死亡時パーティクルの更新
+	if (deathParticles_) {
+		deathParticles_->Update();
+	}
 
 	// 敵キャラの更新
 	for (Enemy* enemy : enemies_) {
@@ -220,6 +239,11 @@ void GameScene::Draw() {
 
 	// 自キャラの描画
 	player_->Draw();
+
+	// 死亡時パーティクルの描画
+	if (deathParticles_) {
+		deathParticles_->Draw();
+	}
 
 	// 敵キャラの描画
 	for (Enemy* enemy : enemies_) {

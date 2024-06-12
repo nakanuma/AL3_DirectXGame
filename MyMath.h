@@ -13,6 +13,12 @@ struct AABB {
 class MyMath {
 public:
 	///
+	///	3次元ベクトル
+	/// 
+
+	static Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
+
+	///
 	///	4x4行列
 	///
 
