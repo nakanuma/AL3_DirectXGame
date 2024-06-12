@@ -36,8 +36,7 @@ void GameScene::Initialize() {
 
 	// 自キャラの初期化
 	player_->Initialize(
-		modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(), modelFighterR_arm_.get(),
-		&viewProjection_
+		modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(), modelFighterR_arm_.get()
 	);
 
 	// デバッグカメラの生成

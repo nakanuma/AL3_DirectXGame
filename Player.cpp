@@ -8,7 +8,7 @@
 // MyClass
 #include "MyMath.h"
 
-void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm, ViewProjection* viewProjection)
+void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm)
 {
 	// NULLポインタチェック
 	assert(modelBody);
@@ -21,8 +21,6 @@ void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, M
 	modelHead_ = modelHead;
 	modelL_arm_ = modelL_arm;
 	modelR_arm_ = modelR_arm;
-
-	viewProjection_ = viewProjection;
 
 	// ワールド変換の初期化
 	worldTransformBody_.Initialize();
@@ -69,7 +67,7 @@ void Player::Update()
 			move = MyMath::Normalize(MyMath::Multiply(speed, MyMath::Normalize(move)));
 
 			// 移動ベクトルをカメラの角度だけ回転する
-			move = MyMath::Add(move, viewProjection_->rotation_);
+			move = MyMath::Transform(move, MyMath::RotationY(viewProjection_->rotation_.y));
 		}
 
 		// 移動方向と自キャラの向きを合わせる（Y軸周り角度）

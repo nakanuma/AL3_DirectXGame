@@ -9,7 +9,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm, ViewProjection* viewProjection);
+	void Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm);
 
 	/// <summary>
 	/// 更新
@@ -31,7 +31,7 @@ public:
 	/// カメラのビュープロジェクションをセット
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
-	void SetViewProjection(const ViewProjection* viewProjection) { cameraViewProjection_ = viewProjection; }
+	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	/// <summary>
 	/// 浮遊ギミック初期化
@@ -67,10 +67,7 @@ private:
 	Model* modelR_arm_ = nullptr;
 
 	// ビュープロジェクション
-	ViewProjection* viewProjection_ = nullptr;
-
-	// カメラのビュープロジェクション
-	const ViewProjection* cameraViewProjection_ = nullptr;
+	const ViewProjection* viewProjection_ = nullptr;
 
 	// 浮遊ギミックの媒介変数
 	float floatingParameter_ = 0.0f;
