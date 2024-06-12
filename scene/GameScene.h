@@ -16,6 +16,7 @@
 #include "Skydome.h"
 #include "Ground.h"
 #include "FollowCamera.h"
+#include "enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -76,6 +77,11 @@ private: // メンバ変数
 
 	// 自キャラ
 	std::unique_ptr<Player> player_ = nullptr;
+
+	// 敵キャラ
+	std::unique_ptr<Enemy> enemy_ = nullptr;
+	// 敵キャラの3Dモデル
+	std::unique_ptr<Model> modelEnemy_;
 
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;

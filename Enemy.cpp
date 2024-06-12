@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include <numbers>
 
 void Enemy::Initialize(const std::vector<Model*>& models)
 {
@@ -7,6 +8,9 @@ void Enemy::Initialize(const std::vector<Model*>& models)
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.translation_.y = 1.0f;
+	worldTransform_.translation_.z = 8.0f;
+	worldTransform_.rotation_.y = std::numbers::pi_v<float>;
 }
 
 void Enemy::Update()

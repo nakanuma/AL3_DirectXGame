@@ -42,6 +42,18 @@ void GameScene::Initialize() {
 	// 自キャラの初期化
 	player_->Initialize(playerModels);
 
+
+	// 敵キャラの生成
+	enemy_ = std::make_unique<Enemy>();
+	// 敵キャラの3Dモデルの生成
+	modelEnemy_.reset(Model::CreateFromOBJ("enemy", true));
+	std::vector<Model*> enemyModels = {
+		modelEnemy_.get()
+	};
+	// 敵キャラの初期化
+	enemy_->Initialize(enemyModels);
+
+
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(dxCommon_->GetBackBufferWidth(), dxCommon_->GetBackBufferWidth());
 
@@ -78,6 +90,9 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
+
+	// 敵キャラの更新
+	enemy_->Update();
 
 	// 天球の更新
 	skydome_->Update();
@@ -143,6 +158,9 @@ void GameScene::Draw() {
 
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
+
+	// 敵キャラの描画
+	enemy_->Draw(viewProjection_);
 
 	// 天球の描画
 	skydome_->Draw();

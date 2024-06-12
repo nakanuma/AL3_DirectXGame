@@ -7,6 +7,7 @@
 
 class Enemy : public BaseCharacter
 {
+public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
