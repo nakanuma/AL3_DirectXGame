@@ -8,21 +8,24 @@
 // MyClass
 #include "MyMath.h"
 
-void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm, ViewProjection* viewProjection)
+void Player::Initialize(const std::vector<Model*>& models)
 {
+	// 基底クラスの初期化
+	BaseCharacter::Initialize(models);
+
 	// NULLポインタチェック
-	assert(modelBody);
+	/*assert(modelBody);
 	assert(modelHead);
 	assert(modelL_arm);
-	assert(modelR_arm);
+	assert(modelR_arm);*/
 
 	// 引数として受け取ったデータをメンバ変数に記録する
-	modelBody_ = modelBody;
+	/*modelBody_ = modelBody;
 	modelHead_ = modelHead;
 	modelL_arm_ = modelL_arm;
-	modelR_arm_ = modelR_arm;
+	modelR_arm_ = modelR_arm;*/
 
-	viewProjection_ = viewProjection;
+	/*viewProjection_ = viewProjection;*/
 
 	// ワールド変換の初期化
 	worldTransformBody_.Initialize();
@@ -45,6 +48,9 @@ void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, M
 
 void Player::Update()
 {
+	// 基底クラスの更新
+	BaseCharacter::Update();
+
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 
@@ -69,7 +75,7 @@ void Player::Update()
 			move = MyMath::Normalize(MyMath::Multiply(speed, MyMath::Normalize(move)));
 
 			// 移動ベクトルをカメラの角度だけ回転する
-			move = MyMath::Add(move, viewProjection_->rotation_);
+			/*move = MyMath::Add(move, viewProjection_->rotation_);*/
 		}
 
 		// 移動方向と自キャラの向きを合わせる（Y軸周り角度）
@@ -102,13 +108,13 @@ void Player::Update()
 	ImGui::End();
 }
 
-void Player::Draw()
+void Player::Draw(const ViewProjection& viewProjection)
 {
 	// 3Dモデルを描画
-	modelBody_->Draw(worldTransformBody_, *viewProjection_, nullptr);
-	modelHead_->Draw(worldTransformHead_, *viewProjection_, nullptr);
-	modelL_arm_->Draw(worldTransformL_arm_, *viewProjection_, nullptr);
-	modelR_arm_->Draw(worldTransformR_arm_, *viewProjection_, nullptr);
+	models_[kModelIndexBody]->Draw(worldTransformBody_, viewProjection);
+	models_[kModelIndexHead]->Draw(worldTransformHead_, viewProjection);
+	models_[kModelIndexL_arm]->Draw(worldTransformL_arm_, viewProjection);
+	models_[kModelIndexR_arm]->Draw(worldTransformR_arm_, viewProjection);
 }
 
 void Player::InitializeFloatingGimmick()

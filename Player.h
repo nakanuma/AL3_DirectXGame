@@ -3,23 +3,26 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-class Player
+#include "BaseCharacter.h"
+
+class Player : public BaseCharacter
 {
 public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm, ViewProjection* viewProjection);
+	/// <param name="models">モデルデータ配列</param>
+	void Initialize(const std::vector<Model*>& models) override;
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(const ViewProjection& viewProjection) override;
 
 	/// <summary>
 	/// ワールドトランスフォームを取得
@@ -65,6 +68,12 @@ private:
 	Model* modelHead_ = nullptr;
 	Model* modelL_arm_ = nullptr;
 	Model* modelR_arm_ = nullptr;
+
+	// モデル番号
+	const uint32_t kModelIndexBody = 0;
+	const uint32_t kModelIndexHead = 1;
+	const uint32_t kModelIndexL_arm = 2;
+	const uint32_t kModelIndexR_arm = 3;
 
 	// ビュープロジェクション
 	ViewProjection* viewProjection_ = nullptr;

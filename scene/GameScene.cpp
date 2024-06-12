@@ -34,11 +34,13 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 
+	// 自キャラモデル
+	std::vector<Model*> playerModels = {
+		modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(), modelFighterR_arm_.get()
+	};
+
 	// 自キャラの初期化
-	player_->Initialize(
-		modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(), modelFighterR_arm_.get(),
-		&viewProjection_
-	);
+	player_->Initialize(playerModels);
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(dxCommon_->GetBackBufferWidth(), dxCommon_->GetBackBufferWidth());
@@ -140,7 +142,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	// 自キャラの描画
-	player_->Draw();
+	player_->Draw(viewProjection_);
 
 	// 天球の描画
 	skydome_->Draw();
