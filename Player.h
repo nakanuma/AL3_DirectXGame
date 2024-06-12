@@ -9,7 +9,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Model* model, ViewProjection* viewProjection);
+	void Initialize(Model* model);
 
 	/// <summary>
 	/// 更新
@@ -31,7 +31,7 @@ public:
 	/// カメラのビュープロジェクションをセット
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
-	void SetViewProjection(const ViewProjection* viewProjection) { cameraViewProjection_ = viewProjection; }
+	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 private:
 	// ワールド変換データ
@@ -41,9 +41,6 @@ private:
 	Model* model_ = nullptr;
 
 	// ビュープロジェクション
-	ViewProjection* viewProjection_ = nullptr;
-
-	// カメラのビュープロジェクション
-	const ViewProjection* cameraViewProjection_ = nullptr;
+	const ViewProjection* viewProjection_ = nullptr;
 };
 
