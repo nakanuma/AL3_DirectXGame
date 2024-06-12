@@ -34,7 +34,7 @@ public:
 	/// カメラのビュープロジェクションをセット
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
-	void SetViewProjection(const ViewProjection* viewProjection) { cameraViewProjection_ = viewProjection; }
+	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	/// <summary>
 	/// 浮遊ギミック初期化
@@ -76,10 +76,7 @@ private:
 	const uint32_t kModelIndexR_arm = 3;
 
 	// ビュープロジェクション
-	ViewProjection* viewProjection_ = nullptr;
-
-	// カメラのビュープロジェクション
-	const ViewProjection* cameraViewProjection_ = nullptr;
+	const ViewProjection* viewProjection_ = nullptr;
 
 	// 浮遊ギミックの媒介変数
 	float floatingParameter_ = 0.0f;

@@ -75,7 +75,7 @@ void Player::Update()
 			move = MyMath::Normalize(MyMath::Multiply(speed, MyMath::Normalize(move)));
 
 			// 移動ベクトルをカメラの角度だけ回転する
-			/*move = MyMath::Add(move, viewProjection_->rotation_);*/
+			move = MyMath::Transform(move, MyMath::RotationY(viewProjection_->rotation_.y));
 		}
 
 		// 移動方向と自キャラの向きを合わせる（Y軸周り角度）
