@@ -46,9 +46,11 @@ void GameScene::Initialize() {
 	// 敵キャラの生成
 	enemy_ = std::make_unique<Enemy>();
 	// 敵キャラの3Dモデルの生成
-	modelEnemy_.reset(Model::CreateFromOBJ("enemy", true));
-	std::vector<Model*> enemyModels = {
-		modelEnemy_.get()
+	modelEnemyBody_.reset(Model::CreateFromOBJ("enemy_body", true));
+	modelEnemyL_spear_.reset(Model::CreateFromOBJ("enemy_L_spear", true));
+	modekEnemyR_spear_.reset(Model::CreateFromOBJ("enemy_R_spear", true));
+	std::vector<Model*> enemyModels = { 
+		modelEnemyBody_.get(), modelEnemyL_spear_.get(), modekEnemyR_spear_.get()
 	};
 	// 敵キャラの初期化
 	enemy_->Initialize(enemyModels);

@@ -26,9 +26,24 @@ public:
 
 private:
 	// ワールド変換データ
-	WorldTransform worldTransform_;
+	WorldTransform worldTransformBody_;
+	WorldTransform worldTransformL_spear_;
+	WorldTransform worldTransformR_spear_;
+
+	// モデル
+	Model* modelBody_ = nullptr;
+	Model* modelL_spear_ = nullptr;
+	Model* modelR_spear_ = nullptr;
+
+	// モデル番号
+	const uint32_t kModelIndexBody = 0;
+	const uint32_t kModelIndexL_spear = 1;
+	const uint32_t kModelIndexR_spear = 2;
 
 	// ビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
+
+	// 速度
+	const float kSpeed = 0.3f;
 };
 

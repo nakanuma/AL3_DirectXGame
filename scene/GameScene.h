@@ -81,7 +81,9 @@ private: // メンバ変数
 	// 敵キャラ
 	std::unique_ptr<Enemy> enemy_ = nullptr;
 	// 敵キャラの3Dモデル
-	std::unique_ptr<Model> modelEnemy_;
+	std::unique_ptr<Model> modelEnemyBody_;
+	std::unique_ptr<Model> modelEnemyL_spear_;
+	std::unique_ptr<Model> modekEnemyR_spear_;
 
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;
