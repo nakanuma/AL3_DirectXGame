@@ -1,9 +1,17 @@
 #pragma once
+#include <optional>
+
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
 #include "BaseCharacter.h"
+
+// 振る舞い
+enum class Behavior {
+	kRoot, // 通常状態
+	kAttack // 攻撃中
+};
 
 class Player : public BaseCharacter
 {
@@ -56,24 +64,47 @@ public:
 	/// </summary>
 	void UpdateArmSwingGimmick();
 
+	/// <summary>
+	/// 通常行動更新
+	/// </summary>
+	void BehaviorRootUpdate();
+
+	/// <summary>
+	/// 攻撃行動更新
+	/// </summary>
+	void BehaviorAttackUpdate();
+
+	/// <summary>
+	/// 通常状態初期化
+	/// </summary>
+	void BehaviorRootInitialize();
+
+	/// <summary>
+	/// 攻撃時状態初期化
+	/// </summary>
+	void BehaviorAttackInitialize();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransformBody_;
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformL_arm_;
 	WorldTransform worldTransformR_arm_;
+	WorldTransform worldTransformHammer_;
 
 	// モデル
 	Model* modelBody_ = nullptr;
 	Model* modelHead_ = nullptr;
 	Model* modelL_arm_ = nullptr;
 	Model* modelR_arm_ = nullptr;
+	Model* modelHammer_ = nullptr;
 
 	// モデル番号
 	const uint32_t kModelIndexBody = 0;
 	const uint32_t kModelIndexHead = 1;
 	const uint32_t kModelIndexL_arm = 2;
 	const uint32_t kModelIndexR_arm = 3;
+	const uint32_t kModelIndexHammer = 4;
 
 	// ビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
@@ -87,5 +118,14 @@ private:
 	uint16_t period_;
 	// 浮遊の振幅
 	float floatingAmplitude_;
+
+	// 振る舞い
+	Behavior behavior_ = Behavior::kRoot;
+	// 次の振る舞いリクエスト
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+	// 攻撃後の硬直時間をカウントする変数
+	uint32_t postAttackTimer_ = 0;
+	// 攻撃後の硬直時間
+	const uint32_t kPostAttackCooldown = 10;
 };
 
