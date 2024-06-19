@@ -452,5 +452,8 @@ void Player::OnCollision(const Enemy* enemy)
 {
 	(void)enemy;
 	// ジャンプ開始（仮処理）
-	velocity_ += Vector3(0, kJumpAcceleration, 0); // 初速
+	//velocity_ += Vector3(0, kJumpAcceleration, 0); // 初速
+
+	// デスフラグを立てる
+	isDead_ = true;
 }

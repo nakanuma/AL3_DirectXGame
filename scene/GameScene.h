@@ -19,6 +19,12 @@
 #include "CameraController.h"
 #include "DeathParticles.h"
 
+// ゲームのフェーズ（型）
+enum class Phase {
+	kPlay, // ゲームプレイ
+	kDeath, // デス演出
+};
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -59,6 +65,26 @@ public: // メンバ関数
 	/// 全ての当たり判定を行う
 	/// </summary>
 	void CheckAllCollisions();
+
+	/// <summary>
+	/// ゲームプレイフェーズの処理
+	/// </summary>
+	void PlayPhaseUpdate();
+
+	/// <summary>
+	/// デス演出フェーズの処理
+	/// </summary>
+	void DeathPhaseUpdate();
+
+	/// <summary>
+	/// フェーズの切り替え
+	/// </summary>
+	void ChangePhase();
+
+	/// <summary>
+	/// シーン終了フラグのgetter
+	/// </summary>
+	bool IsFinished() const { return finished_; }
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -116,4 +142,10 @@ private: // メンバ変数
 	DeathParticles* deathParticles_ = nullptr;
 	// 死亡時パーティクルモデル
 	Model* modelDeathParticle_ = nullptr;
+
+	// ゲームの現在フェーズ
+	Phase phase_;
+
+	// 終了フラグ
+	bool finished_ = false;
 };

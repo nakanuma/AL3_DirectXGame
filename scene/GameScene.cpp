@@ -6,7 +6,7 @@
 // MyClass
 #include "MyMath.h"
 
-GameScene::GameScene() {} 
+GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	// 3Dモデルデータの開放
@@ -47,7 +47,7 @@ GameScene::~GameScene() {
 	// カメラコントローラの開放
 	delete cameraController_;
 
-	
+
 	// 死亡時パーティクルの開放
 	if (deathParticles_) {
 		delete deathParticles_;
@@ -68,7 +68,7 @@ void GameScene::Initialize() {
 
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
-	viewProjection_.translation_ = {4.0f, 3.0f, -30.0f}; // カメラの初期座標を変更
+	viewProjection_.translation_ = { 4.0f, 3.0f, -30.0f }; // カメラの初期座標を変更
 
 
 	// デバッグカメラの生成
@@ -114,11 +114,12 @@ void GameScene::Initialize() {
 		enemies_.push_back(newEnemy);
 	}
 
+	// 仮の生成処理。後で消す
 	// 3Dモデル（死亡時パーティクル）の生成
 	modelDeathParticle_ = Model::CreateFromOBJ("deathParticle", true);
-	// 仮の生成処理
-	deathParticles_ = new DeathParticles;
-	deathParticles_->Initialize(modelDeathParticle_, &viewProjection_, player_->GetWorldTransform().translation_);
+	//// 仮の生成処理
+	//deathParticles_ = new DeathParticles;
+	//deathParticles_->Initialize(modelDeathParticle_, &viewProjection_, player_->GetWorldTransform().translation_);
 
 	// カメラコントローラの初期化
 	// 生成
@@ -131,51 +132,18 @@ void GameScene::Initialize() {
 	cameraController_->Reset();
 	// 移動範囲をセット
 	cameraController_->SetMovableArea(movableArea_);
+
+	// ゲームプレイフェーズから開始
+	phase_ = Phase::kPlay;
 }
 
 void GameScene::Update() {
-	// ブロックの更新処理
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-			// nullptrだった場合にはスキップ
-			if (!worldTransformBlock)
-				continue;
-			worldTransformBlock->UpdateMatrix();
-		}
-	}
-
-	// 天球の更新
-	skydome_->Update();
-
-	// 自キャラの更新
-	player_->Update();
-
-	// 死亡時パーティクルの更新
-	if (deathParticles_) {
-		deathParticles_->Update();
-	}
-
-	// 敵キャラの更新
-	for (Enemy* enemy : enemies_) {
-		if (enemy != nullptr) {
-			enemy->Update();
-		}
-	}
-
-	// 全ての当たり判定を行う
-	CheckAllCollisions();
-
-	// デバッグカメラの更新
-	debugCamera_->Update();
-
-	// カメラコントローラの更新
-	viewProjection_.translation_ = cameraController_->GetTranslation();
-	cameraController_->Update();
+	ChangePhase();
 
 	// デバッグ用
-	/*ImGui::Begin("Window");
-	ImGui::DragFloat3("viewProjection", &viewProjection_.translation_.x);
-	ImGui::End();*/
+	ImGui::Begin("Window");
+
+	ImGui::End();
 
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_SPACE)) {
@@ -237,8 +205,10 @@ void GameScene::Draw() {
 	// 天球の描画
 	skydome_->Draw();
 
-	// 自キャラの描画
-	player_->Draw();
+	// 自キャラの描画（生きている間のみ）
+	if (!player_->IsDead()) {
+		player_->Draw();
+	}
 
 	// 死亡時パーティクルの描画
 	if (deathParticles_) {
@@ -333,4 +303,101 @@ void GameScene::CheckAllCollisions()
 	// 自弾と敵キャラの当たり判定
 
 #pragma endregion
+}
+
+void GameScene::PlayPhaseUpdate()
+{
+	// 天球の更新
+	skydome_->Update();
+
+	// 自キャラの更新
+	player_->Update();
+
+	// 敵の更新（複数）
+	for (Enemy* enemy : enemies_) {
+		if (enemy != nullptr) {
+			enemy->Update();
+		}
+	}
+
+	// カメラコントローラの更新
+	viewProjection_.translation_ = cameraController_->GetTranslation();
+	cameraController_->Update();
+
+	// カメラの更新
+	debugCamera_->Update();
+
+	// ブロックの更新
+	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+			// nullptrだった場合にはスキップ
+			if (!worldTransformBlock)
+				continue;
+			worldTransformBlock->UpdateMatrix();
+		}
+	}
+
+	// 全ての当たり判定
+	CheckAllCollisions();
+
+	// 自キャラの死亡時
+	if (player_->IsDead()) {
+		// 死亡演出フェーズに切り替え
+		phase_ = Phase::kDeath;
+		// 自キャラの座標を取得
+		const Vector3& deathParticlePosition = player_->GetWorldPosition();
+		// 自キャラの位置にパーティクルを発生、初期化
+		deathParticles_ = new DeathParticles;
+		deathParticles_->Initialize(modelDeathParticle_, &viewProjection_, deathParticlePosition);
+	}
+}
+
+void GameScene::DeathPhaseUpdate()
+{
+	// 天球の更新
+	skydome_->Update();
+
+	// 敵の更新（複数）
+	for (Enemy* enemy : enemies_) {
+		if (enemy != nullptr) {
+			enemy->Update();
+		}
+	}
+
+	//　デスパーティクルの更新
+	if (deathParticles_) {
+		deathParticles_->Update();
+	}
+
+	// カメラの更新
+	debugCamera_->Update();
+
+	// ブロックの更新
+	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+			// nullptrだった場合にはスキップ
+			if (!worldTransformBlock)
+				continue;
+			worldTransformBlock->UpdateMatrix();
+		}
+	}
+
+	// ゲームシーンの終了
+	if (deathParticles_ && deathParticles_->IsFinished()) {
+		finished_ = true;
+	}
+}
+
+void GameScene::ChangePhase()
+{
+	switch (phase_) {
+	case Phase::kPlay:
+		// ゲームプレイフェーズの処理
+		PlayPhaseUpdate();
+		break;
+	case Phase::kDeath:
+		// デス演出フェーズの処理
+		DeathPhaseUpdate();
+		break;
+	}
 }

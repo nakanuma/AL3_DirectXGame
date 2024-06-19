@@ -28,6 +28,12 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// 終了フラグのgetter
+	/// </summary>
+	/// <returns></returns>
+	bool IsFinished() const { return isFinished_; }
+
 private:
 	// モデル
 	Model* model_;
