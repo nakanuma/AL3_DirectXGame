@@ -7,25 +7,12 @@
 
 // MyClass
 #include "MyMath.h"
+#include "GlobalVariables.h"
 
 void Player::Initialize(const std::vector<Model*>& models)
 {
 	// 基底クラスの初期化
 	BaseCharacter::Initialize(models);
-
-	// NULLポインタチェック
-	/*assert(modelBody);
-	assert(modelHead);
-	assert(modelL_arm);
-	assert(modelR_arm);*/
-
-	// 引数として受け取ったデータをメンバ変数に記録する
-	/*modelBody_ = modelBody;
-	modelHead_ = modelHead;
-	modelL_arm_ = modelL_arm;
-	modelR_arm_ = modelR_arm;*/
-
-	/*viewProjection_ = viewProjection;*/
 
 	// ワールド変換の初期化
 	worldTransformBody_.Initialize();
@@ -48,8 +35,14 @@ void Player::Initialize(const std::vector<Model*>& models)
 	// 腕振りギミック初期化
 	InitializeArmSwingGimmick();
 
-	// 攻撃時初期状態
-	/*InitializeAttackBehavior();*/
+
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+	// グループを追加
+	GlobalVariables::GetInstance()->CreateGroup(groupName);
+	globalVariables->SetValue(groupName, "Test1", 90);
+	globalVariables->SetValue(groupName, "Test2", 60.0f);
+	globalVariables->SetValue(groupName, "Test3", Vector3{1.0f, 2.0f, 3.0f});
 }
 
 void Player::Update()
@@ -129,14 +122,6 @@ void Player::UpdateFloatingGimmick()
 	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * std::numbers::pi_v<float>);
 	// 浮遊を座標に反映
 	worldTransformBody_.translation_.y = 1.0f + std::sin(floatingParameter_) * floatingAmplitude_;
-
-	/*ImGui::Begin("Player");
-	ImGui::DragFloat3("Head Translation", &worldTransformHead_.translation_.x, 0.01f);
-	ImGui::DragFloat3("ArmL Translation", &worldTransformL_arm_.translation_.x, 0.01f);
-	ImGui::DragFloat3("ArmR Translation", &worldTransformR_arm_.translation_.x, 0.01f);
-	ImGui::DragInt("Period", reinterpret_cast<int*>(&period_), 1);
-	ImGui::DragFloat("floatingAmplitude", &floatingAmplitude_, 0.1f);
-	ImGui::End();*/
 }
 
 void Player::InitializeArmSwingGimmick()
