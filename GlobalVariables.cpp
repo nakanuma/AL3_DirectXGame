@@ -348,5 +348,5 @@ Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std
     const Item& item = group.at(key);
 
     // 値を返す
-    return std::get<Vector3>(item);
+    return std::get<Vector3>(item); 
 }
