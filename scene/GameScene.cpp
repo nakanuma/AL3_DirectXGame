@@ -3,6 +3,9 @@
 #include "TextureManager.h"
 #include <cassert>
 
+// MyClass
+#include "GlobalVariables.h"
+
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {}

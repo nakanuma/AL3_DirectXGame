@@ -4,6 +4,9 @@
 #include <string>
 #include <Vector3.h>
 #include <map>
+#include <json.hpp>
+
+using json = nlohmann::json;
 
 // 項目
 struct Item {
@@ -45,6 +48,12 @@ public:
 	/// </summary>
 	void Update();
 
+	/// <summary>
+	/// ファイルに書き出し
+	/// </summary>
+	/// <param name="gropuName">グループ名</param>
+	void SaveFile(const std::string& groupName);
+
 private:
 	GlobalVariables() = default;
 	~GlobalVariables() = default;
@@ -53,5 +62,8 @@ private:
 
 	// 全データ
 	std::map<std::string, Group> datas_;
+
+	// グローバル変数の保存先ファイルパス
+	const std::string kDirectoryPath = "Resources/GlobalVariables/";
 };
 
