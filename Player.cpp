@@ -40,15 +40,21 @@ void Player::Initialize(const std::vector<Model*>& models)
 	const char* groupName = "Player";
 	// グループを追加
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
-	globalVariables->SetValue(groupName, "Test1", 90);
-	globalVariables->SetValue(groupName, "Test2", 60.0f);
-	globalVariables->SetValue(groupName, "Test3", Vector3{1.0f, 2.0f, 3.0f});
+	globalVariables->AddItem(groupName, "Head Translation", worldTransformHead_.translation_);
+	globalVariables->AddItem(groupName, "ArmL Translation", worldTransformL_arm_.translation_);
+	globalVariables->AddItem(groupName, "ArmR Translation", worldTransformR_arm_.translation_);
+	globalVariables->AddItem(groupName, "floatingCycle", period_);
+	globalVariables->AddItem(groupName, "floatingAmplitude", floatingAmplitude_);
+	globalVariables->AddItem(groupName, "idleArmAngleMax", idleArmAngleMax_);
 }
 
 void Player::Update()
 {
 	// 基底クラスの更新
 	BaseCharacter::Update();
+
+	// 調整項目の適用
+	ApplyGlobalVariables();
 
 	// Behavior遷移
 	if (behaviorRequest_) {
@@ -127,6 +133,7 @@ void Player::UpdateFloatingGimmick()
 void Player::InitializeArmSwingGimmick()
 {
 	armSwingParameter_ = 0.0f;
+	idleArmAngleMax_ = std::numbers::pi_v<float> / 2.0f; // π/2を最大角度として設定
 }
 
 void Player::UpdateArmSwingGimmick()
@@ -142,8 +149,8 @@ void Player::UpdateArmSwingGimmick()
 	// 腕振りの振幅
 	const float armSwingAmplitude_ = 0.5f;
 	// 回転角に反映
-	worldTransformL_arm_.rotation_.x = std::sin(armSwingParameter_) * armSwingAmplitude_;
-	worldTransformR_arm_.rotation_.x = std::sin(armSwingParameter_) * armSwingAmplitude_;
+	worldTransformL_arm_.rotation_.x = std::sin(armSwingParameter_) * armSwingAmplitude_ * idleArmAngleMax_;
+	worldTransformR_arm_.rotation_.x = std::sin(armSwingParameter_) * armSwingAmplitude_ * idleArmAngleMax_;
 }
 
 void Player::BehaviorRootUpdate()
@@ -241,4 +248,16 @@ void Player::BehaviorAttackInitialize()
 	worldTransformHammer_.rotation_.x = 0.0f;
 	// 攻撃後の硬直時間
 	postAttackTimer_ = 0;
+}
+
+void Player::ApplyGlobalVariables()
+{
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+	worldTransformHead_.translation_ = globalVariables->GetVector3Value(groupName, "Head Translation");
+	worldTransformL_arm_.translation_ = globalVariables->GetVector3Value(groupName, "ArmL Translation");
+	worldTransformR_arm_.translation_ = globalVariables->GetVector3Value(groupName, "ArmR Translation");
+	period_ = globalVariables->GetIntValue(groupName, "floatingCycle");
+	floatingAmplitude_ = globalVariables->GetFloatValue(groupName, "floatingAmplitude");
+	idleArmAngleMax_ = globalVariables->GetFloatValue(groupName, "idleArmAngleMax");
 }

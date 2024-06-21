@@ -84,6 +84,9 @@ public:
 	/// </summary>
 	void BehaviorAttackInitialize();
 
+	// 調整項目の適用
+	void ApplyGlobalVariables();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransformBody_;
@@ -113,9 +116,11 @@ private:
 	float floatingParameter_ = 0.0f;
 	// 腕振りギミックの媒介変数
 	float armSwingParameter_ = 0.0f;
+	// 腕振りの最大角度
+	float idleArmAngleMax_;
 
 	// 浮遊移動のサイクル<frame>
-	uint16_t period_;
+	int32_t period_;
 	// 浮遊の振幅
 	float floatingAmplitude_;
 
