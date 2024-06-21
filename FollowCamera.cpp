@@ -36,7 +36,7 @@ void FollowCamera::Update()
 	// 追従対象がいれば
 	if (target_) {
 		// 追従対象からカメラまでのオフセット
-		Vector3 offset = { 0.0f, 2.0f, -20.0f };
+		Vector3 offset = { 0.0f, 2.0f, -25.0f };
 
 		// カメラの回転行列を計算
 		Matrix4x4 rotationMatrix = MyMath::RotationY(viewProjection_.rotation_.y);

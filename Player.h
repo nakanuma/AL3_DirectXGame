@@ -10,7 +10,8 @@
 // 振る舞い
 enum class Behavior {
 	kRoot, // 通常状態
-	kAttack // 攻撃中
+	kAttack, // 攻撃中
+	kJump, // ジャンプ中
 };
 
 class Player : public BaseCharacter
@@ -75,6 +76,11 @@ public:
 	void BehaviorAttackUpdate();
 
 	/// <summary>
+	/// ジャンプ行動更新
+	/// </summary>
+	void BehaviorJumpUpdate();
+
+	/// <summary>
 	/// 通常状態初期化
 	/// </summary>
 	void BehaviorRootInitialize();
@@ -83,6 +89,11 @@ public:
 	/// 攻撃時状態初期化
 	/// </summary>
 	void BehaviorAttackInitialize();
+
+	/// <summary>
+	/// ジャンプ行動初期化
+	/// </summary>
+	void BehaviorJumpInitialize();
 
 	// 調整項目の適用
 	void ApplyGlobalVariables();
@@ -132,5 +143,8 @@ private:
 	uint32_t postAttackTimer_ = 0;
 	// 攻撃後の硬直時間
 	const uint32_t kPostAttackCooldown = 10;
+
+	// 速度
+	Vector3 velocity_ = {};
 };
 

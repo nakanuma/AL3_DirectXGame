@@ -35,7 +35,6 @@ void Player::Initialize(const std::vector<Model*>& models)
 	// 腕振りギミック初期化
 	InitializeArmSwingGimmick();
 
-
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "Player";
 	// グループを追加
@@ -69,6 +68,8 @@ void Player::Update()
 		case Behavior::kAttack:
 			BehaviorAttackInitialize();
 			break;
+		case Behavior::kJump:
+			BehaviorJumpInitialize();
 		}
 		// 振る舞いリクエストをリセット
 		behaviorRequest_ = std::nullopt;
@@ -84,6 +85,9 @@ void Player::Update()
 	case Behavior::kAttack:
 		BehaviorAttackUpdate();
 		break;
+		// ジャンプ行動
+	case Behavior::kJump:
+		BehaviorJumpUpdate();
 	}
 
 
@@ -92,6 +96,7 @@ void Player::Update()
 	ImGui::Text("Right Stick : Camera Rotate");
 	ImGui::Text("Left Stick : Move");
 	ImGui::Text("A Button : Attack");
+	ImGui::Text("B Button : Jump");
 	ImGui::End();
 }
 
@@ -167,31 +172,41 @@ void Player::BehaviorRootUpdate()
 		const float speed = 0.3f;
 
 		// 移動量
-		Vector3 move = {
+		/*Vector3 move = {
 			static_cast<float>(joyState.Gamepad.sThumbLX),
 			0.0f,
 			static_cast<float>(joyState.Gamepad.sThumbLY)
+		};*/
+		velocity_ = {
+			static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX, 
+			0.0f, 
+			static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX
 		};
 
 		// ゼロ除算や無限大への演算を避ける
-		if (move.x != 0.0f || move.z != 0.0f) {
+		if (velocity_.x != 0.0f || velocity_.z != 0.0f) {
 			// 移動量に速さを反映
-			move = MyMath::Normalize(MyMath::Multiply(speed, MyMath::Normalize(move)));
+			velocity_ = MyMath::Normalize(MyMath::Multiply(speed, MyMath::Normalize(velocity_)));
 
 			// 移動ベクトルをカメラの角度だけ回転する
-			move = MyMath::Transform(move, MyMath::RotationY(viewProjection_->rotation_.y));
+			velocity_ = MyMath::Transform(velocity_, MyMath::RotationY(viewProjection_->rotation_.y));
 		}
 
 		// 移動方向と自キャラの向きを合わせる（Y軸周り角度）
-		worldTransformBody_.rotation_.y = std::atan2(move.x, move.z);
+		worldTransformBody_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
 
 		// 移動
-		worldTransformBody_.translation_.x += move.x;
-		worldTransformBody_.translation_.z += move.z;
+		worldTransformBody_.translation_.x += velocity_.x;
+		worldTransformBody_.translation_.z += velocity_.z;
 
 		// ゲームパッドのAボタンが押された際に攻撃状態へ遷移
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
 			behaviorRequest_ = Behavior::kAttack;
+		}
+
+		// ゲームパッドのBボタンが押された際にジャンプ行動へ遷移
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
+			behaviorRequest_ = Behavior::kJump;
 		}
 	}
 
@@ -234,9 +249,34 @@ void Player::BehaviorAttackUpdate()
 	worldTransformHammer_.UpdateMatrix();
 }
 
+void Player::BehaviorJumpUpdate() 
+{
+	// 移動
+	worldTransformBody_.translation_ += velocity_;
+	// 重力加速度
+	const float kGravityAcceleration = 0.05f;
+	// 加速度ベクトル
+	Vector3 accelerationVector = {0.0f, -kGravityAcceleration, 0.0f};
+	// 加速する
+	velocity_ += accelerationVector;
+
+	// 着地
+	if (worldTransformBody_.translation_.y <= 0.0f) {
+		worldTransformBody_.translation_.y = 0.0f;
+		// ジャンプ終了
+		behaviorRequest_ = Behavior::kRoot;
+	}
+
+	// 行列を更新
+	worldTransformBody_.UpdateMatrix();
+	worldTransformHead_.UpdateMatrix();
+	worldTransformL_arm_.UpdateMatrix();
+	worldTransformR_arm_.UpdateMatrix();
+	worldTransformHammer_.UpdateMatrix();
+}
+
 void Player::BehaviorRootInitialize()
 {
-
 }
 
 void Player::BehaviorAttackInitialize()
@@ -250,7 +290,19 @@ void Player::BehaviorAttackInitialize()
 	postAttackTimer_ = 0;
 }
 
-void Player::ApplyGlobalVariables()
+void Player::BehaviorJumpInitialize() 
+{ 
+	worldTransformBody_.translation_.y = 0.0f; 
+	worldTransformL_arm_.rotation_.x = 0.0f;
+	worldTransformR_arm_.rotation_.x = 0.0f;
+
+	// ジャンプ初速
+	const float kJumpFirstSpeed = 1.0f;
+	// ジャンプ初速を与える
+	velocity_.y = kJumpFirstSpeed;
+}
+
+void Player::ApplyGlobalVariables() 
 {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "Player";
