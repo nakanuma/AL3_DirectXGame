@@ -17,6 +17,7 @@
 #include "Ground.h"
 #include "FollowCamera.h"
 #include "enemy.h"
+#include "LockOn.h"
 
 /// <summary>
 /// ゲームシーン
@@ -106,4 +107,7 @@ private: // メンバ変数
 
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_ = nullptr;
+
+	// ロックオン
+	std::unique_ptr<LockOn> lockOn_;
 };

@@ -90,6 +90,13 @@ void GameScene::Initialize() {
 	// 自キャラに追従カメラのビュープロジェクションをアドレス渡し
 	player_->SetViewProjection(&followCamera_.get()->GetViewProjection());
 
+
+	// ロックオンの生成とポインタの代入
+	lockOn_ = std::make_unique<LockOn>();
+	// ロックオンの初期化
+	lockOn_->Initialize();
+
+
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
@@ -180,6 +187,9 @@ void GameScene::Draw() {
 
 	// 地面の描画
 	ground_->Draw();
+
+	// ロックオンの描画
+	lockOn_->Draw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
