@@ -24,6 +24,12 @@ public:
 	/// </summary>
 	void Draw(const ViewProjection& viewProjection) override;
 
+	/// <summary>
+	/// 生成時に座標を設定
+	/// </summary>
+	/// <param name="position">座標</param>
+	void SetPosition(const Vector3& position) { worldTransformBody_.translation_ = position; }
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransformBody_;

@@ -47,8 +47,6 @@ void GameScene::Initialize() {
 	player_->Initialize(playerModels);
 
 
-	// 敵キャラの生成
-	enemy_ = std::make_unique<Enemy>();
 	// 敵キャラの3Dモデルの生成
 	modelEnemyBody_.reset(Model::CreateFromOBJ("enemy_body", true));
 	modelEnemyL_spear_.reset(Model::CreateFromOBJ("enemy_L_spear", true));
@@ -56,8 +54,13 @@ void GameScene::Initialize() {
 	std::vector<Model*> enemyModels = { 
 		modelEnemyBody_.get(), modelEnemyL_spear_.get(), modekEnemyR_spear_.get()
 	};
-	// 敵キャラの初期化
-	enemy_->Initialize(enemyModels);
+	// 敵キャラの生成
+	for (uint32_t i = 0; i < kNumEnemies_; ++i) {
+		auto enemy = std::make_unique<Enemy>();
+		enemy->Initialize(enemyModels);
+		enemy->SetPosition({1.0f + (i * 6.0f), 1.0f, 8.0f});
+		enemies_.push_back(std::move(enemy));
+	}
 
 
 	// デバッグカメラの生成
@@ -98,7 +101,9 @@ void GameScene::Update() {
 	player_->Update();
 
 	// 敵キャラの更新
-	enemy_->Update();
+	for (const auto& enemy : enemies_) {
+		enemy->Update();
+	}
 
 	// 天球の更新
 	skydome_->Update();
@@ -166,7 +171,9 @@ void GameScene::Draw() {
 	player_->Draw(viewProjection_);
 
 	// 敵キャラの描画
-	enemy_->Draw(viewProjection_);
+	for (const auto& enemy : enemies_) {
+		enemy->Draw(viewProjection_);
+	}
 
 	// 天球の描画
 	skydome_->Draw();
