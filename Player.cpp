@@ -97,6 +97,7 @@ void Player::Update()
 	ImGui::Text("Left Stick : Move");
 	ImGui::Text("A Button : Attack");
 	ImGui::Text("B Button : Jump");
+	ImGui::Text("Left Trigger : LockOn");
 	ImGui::End();
 }
 

@@ -36,6 +36,12 @@ public:
 	void Search(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection);
 
 	/// <summary>
+	/// 範囲外判定
+	/// </summary>
+	/// <param name="viewProjection"></param>
+	bool OutOfRange(const ViewProjection& viewProjection);
+
+	/// <summary>
 	/// ワールド座標->スクリーン座標
 	/// </summary>
 	/// <param name="worldPosition">ワールド座標</param>
@@ -52,7 +58,7 @@ private:
 	// 最小距離
 	float minDistance_ = 10.0f;
 	// 最大距離
-	float maxDistance_ = 30.0f;
+	float maxDistance_ = 60.0f;
 	// 角度範囲
 	float angleRange_ = 20.0f * std::numbers::pi_v<float> / 180.0f; // radianに変換
 };
