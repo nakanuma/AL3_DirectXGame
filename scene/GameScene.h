@@ -88,7 +88,7 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelEnemyL_spear_;
 	std::unique_ptr<Model> modekEnemyR_spear_;
 	// 敵の最大数
-	const uint32_t kNumEnemies_ = 3;
+	const uint32_t kNumEnemies_ = 1;
 
 	// デバッグカメラ有効
 	bool isDebugCameraActive_ = false;

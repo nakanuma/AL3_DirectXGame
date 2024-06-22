@@ -16,6 +16,9 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
+	// レティクルのテクスチャ
+	TextureManager::Load("reticle.png");
+
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("uvChecker.png");
 
@@ -112,6 +115,9 @@ void GameScene::Update() {
 		enemy->Update();
 	}
 
+	// ロックオン更新
+	lockOn_->Update(enemies_, viewProjection_);
+
 	// 天球の更新
 	skydome_->Update();
 
@@ -188,9 +194,6 @@ void GameScene::Draw() {
 	// 地面の描画
 	ground_->Draw();
 
-	// ロックオンの描画
-	lockOn_->Draw();
-
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -202,6 +205,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	// ロックオンの描画
+	lockOn_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

@@ -30,6 +30,17 @@ public:
 	/// <param name="position">座標</param>
 	void SetPosition(const Vector3& position) { worldTransformBody_.translation_ = position; }
 
+	/// <summary>
+	/// 中心座標取得
+	/// </summary>
+	Vector3 GetCenterPosition() const;
+
+	/// <summary>
+	/// ワールド座標取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPosition();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransformBody_;
