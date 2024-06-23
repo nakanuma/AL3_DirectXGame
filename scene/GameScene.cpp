@@ -99,6 +99,10 @@ void GameScene::Initialize() {
 	// ロックオンの初期化
 	lockOn_->Initialize();
 
+	// 追従カメラにロックオンのポインタを設定
+	followCamera_->SetLockOn(lockOn_.get());
+	// 自キャラにロックオンのポインタを設定
+	player_->SetLockOn(lockOn_.get());
 
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);

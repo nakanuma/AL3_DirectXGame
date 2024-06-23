@@ -8,6 +8,7 @@
 // MyClass
 #include "MyMath.h"
 #include "GlobalVariables.h"
+#include "LockOn.h"
 
 void Player::Initialize(const std::vector<Model*>& models)
 {
@@ -114,8 +115,17 @@ void Player::Draw(const ViewProjection& viewProjection)
 	}
 }
 
-void Player::InitializeFloatingGimmick()
-{
+Vector3 Player::GetWorldPosition() { 
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得
+	worldPos.x = worldTransformBody_.matWorld_.m[3][0];
+	worldPos.y = worldTransformBody_.matWorld_.m[3][1];
+	worldPos.z = worldTransformBody_.matWorld_.m[3][2];
+
+	return worldPos;
+}
+
+void Player::InitializeFloatingGimmick() {
 	// 浮遊ギミックの媒介変数
 	floatingParameter_ = 0.0f;
 	// デフォルトのサイクル
@@ -169,47 +179,60 @@ void Player::BehaviorRootUpdate()
 	/// 
 
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		// 速さ
-		const float speed = 0.3f;
+		float lx = static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX;
+		float ly = static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX;
 
-		// 移動量
-		/*Vector3 move = {
-			static_cast<float>(joyState.Gamepad.sThumbLX),
-			0.0f,
-			static_cast<float>(joyState.Gamepad.sThumbLY)
-		};*/
-		velocity_ = {
-			static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX, 
-			0.0f, 
-			static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX
-		};
+		// デッドゾーンの設定
+		const float deadZone = 0.2f;
+		if (std::abs(lx) < deadZone)
+			lx = 0.0f;
+		if (std::abs(ly) < deadZone)
+			ly = 0.0f;
 
-		// ゼロ除算や無限大への演算を避ける
-		if (velocity_.x != 0.0f || velocity_.z != 0.0f) {
-			// 移動量に速さを反映
-			velocity_ = MyMath::Normalize(MyMath::Multiply(speed, MyMath::Normalize(velocity_)));
+		// スティックによる移動入力がある場合
+		if (lx != 0.0f || ly != 0.0f) {
+			// 速さ
+			const float speed = 0.3f;
+			// 速度を更新
+			velocity_ = {static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX, 0.0f, static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX};
 
-			// 移動ベクトルをカメラの角度だけ回転する
-			velocity_ = MyMath::Transform(velocity_, MyMath::RotationY(viewProjection_->rotation_.y));
+			// ゼロ除算や無限大への演算を避ける
+			if (velocity_.x != 0.0f || velocity_.z != 0.0f) {
+				// 移動量に速さを反映
+				velocity_ = MyMath::Normalize(MyMath::Multiply(speed, MyMath::Normalize(velocity_)));
+
+				// 移動ベクトルをカメラの角度だけ回転する
+				velocity_ = MyMath::Transform(velocity_, MyMath::RotationY(viewProjection_->rotation_.y));
+			}
+
+			// 移動方向と自キャラの向きを合わせる（Y軸周り角度）
+			worldTransformBody_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
+
+			// 移動
+			worldTransformBody_.translation_.x += velocity_.x;
+			worldTransformBody_.translation_.z += velocity_.z;
+
+			// ゲームパッドのAボタンが押された際に攻撃状態へ遷移
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+				behaviorRequest_ = Behavior::kAttack;
+			}
+
+			// ゲームパッドのBボタンが押された際にジャンプ行動へ遷移
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
+				behaviorRequest_ = Behavior::kJump;
+			}
+
+			// 移動入力が無い場合、自キャラをロックオン対象の方向に向ける処理
+		} else if (lockOn_ != nullptr && lockOn_->ExistTarget()) {
+			// ロックオン対象
+			Vector3 lockOnPosition = lockOn_->GetTargetPosition();
+			// 追従対象からロックオン対象へのベクトル
+			Vector3 sub = lockOnPosition - worldTransformBody_.translation_;
+
+			// Y軸周り角度
+			worldTransformBody_.rotation_.y = std::atan2(sub.x, sub.z);
 		}
-
-		// 移動方向と自キャラの向きを合わせる（Y軸周り角度）
-		worldTransformBody_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
-
-		// 移動
-		worldTransformBody_.translation_.x += velocity_.x;
-		worldTransformBody_.translation_.z += velocity_.z;
-
-		// ゲームパッドのAボタンが押された際に攻撃状態へ遷移
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
-			behaviorRequest_ = Behavior::kAttack;
-		}
-
-		// ゲームパッドのBボタンが押された際にジャンプ行動へ遷移
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
-			behaviorRequest_ = Behavior::kJump;
-		}
-	}
+	} 
 
 	// 浮遊ギミック更新
 	UpdateFloatingGimmick();
@@ -314,3 +337,5 @@ void Player::ApplyGlobalVariables()
 	floatingAmplitude_ = globalVariables->GetFloatValue(groupName, "floatingAmplitude");
 	idleArmAngleMax_ = globalVariables->GetFloatValue(groupName, "idleArmAngleMax");
 }
+
+void Player::SetLockOn(LockOn* lockOn) { lockOn_ = lockOn; }

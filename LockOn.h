@@ -48,6 +48,18 @@ public:
 	/// <returns>スクリーン座標</returns>
 	Vector3 WorldToScreen(Vector3 worldPosition, const ViewProjection& viewProjection);
 
+	/// <summary>
+	/// ロックオン対象の座標取得
+	/// </summary>
+	/// <returns>ロックオン対象の中心座標</returns>
+	Vector3 GetTargetPosition() const;
+
+	/// <summary>
+	/// ターゲットの存在を確認
+	/// </summary>
+	/// <returns>ターゲットが存在しているか</returns>
+	bool ExistTarget() const { return target_ ? true : false; }
+
 private:
 	// ロックオンマーク用スプライト
 	std::unique_ptr<Sprite> lockOnMark_;

@@ -7,6 +7,9 @@
 
 #include "BaseCharacter.h"
 
+// 前方宣言
+class LockOn;
+
 // 振る舞い
 enum class Behavior {
 	kRoot, // 通常状態
@@ -38,6 +41,12 @@ public:
 	/// </summary>
 	/// <returns>ワールドトランスフォーム</returns>
 	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetWorldPosition();
 
 	/// <summary>
 	/// カメラのビュープロジェクションをセット
@@ -98,6 +107,11 @@ public:
 	// 調整項目の適用
 	void ApplyGlobalVariables();
 
+	/// <summary>
+	/// ロックオンのsetter
+	/// </summary>
+	void SetLockOn(LockOn* lockOn);
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransformBody_;
@@ -146,5 +160,8 @@ private:
 
 	// 速度
 	Vector3 velocity_ = {};
+
+	// ロックオン
+	const LockOn* lockOn_ = nullptr;
 };
 

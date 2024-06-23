@@ -2,6 +2,9 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
+// 前方宣言
+class LockOn;
+
 /// <summary>
 /// 追従カメラ
 /// </summary>
@@ -30,11 +33,19 @@ public:
 	/// <returns>ビュープロジェクション</returns>
 	const ViewProjection& GetViewProjection() { return viewProjection_; }
 
+	/// <summary>
+	/// ロックオンのsetter
+	/// </summary>
+	void SetLockOn(LockOn* lockOn);
+
 private:
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
 
 	// 追従対象
 	const WorldTransform* target_ = nullptr;
+
+	// ロックオン
+	const LockOn* lockOn_ = nullptr;
 };
 

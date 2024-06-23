@@ -145,3 +145,10 @@ Vector3 LockOn::WorldToScreen(Vector3 worldPosition, const ViewProjection& viewP
 
 	return screenPosition;
 }
+
+Vector3 LockOn::GetTargetPosition() const { 
+	if (target_) {
+		return target_->GetCenterPosition();
+	}
+	return Vector3();
+}
