@@ -18,6 +18,7 @@
 #include "FollowCamera.h"
 #include "enemy.h"
 #include "LockOn.h"
+#include "CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -49,6 +50,11 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// 衝突判定と応答
+	/// </summary>
+	void CheckAllCollision();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -110,4 +116,7 @@ private: // メンバ変数
 
 	// ロックオン
 	std::unique_ptr<LockOn> lockOn_;
+
+	// 衝突マネージャ
+	std::unique_ptr<CollisionManager> collisionManager_;
 };

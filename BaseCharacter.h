@@ -5,7 +5,9 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 
-class BaseCharacter
+#include "Collider.h"
+
+class BaseCharacter : public Collider
 {
 public:
 	/// <summary>
@@ -30,6 +32,11 @@ public:
 	/// </summary>
 	/// <returns>ワールド変換データ</returns>
 	const WorldTransform& GetWorldtransform() { return worldTransform_; }
+
+	/// <summary>
+	/// 中心座標を取得
+	/// </summary>
+	virtual Vector3 GetCenterPosition() const override;
 
 protected:
 	// モデルデータ配列

@@ -104,6 +104,9 @@ void GameScene::Initialize() {
 	// 自キャラにロックオンのポインタを設定
 	player_->SetLockOn(lockOn_.get());
 
+	// 衝突マネージャの生成
+	collisionManager_ = std::make_unique<CollisionManager>();
+
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
@@ -130,6 +133,9 @@ void GameScene::Update() {
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
+
+	// 衝突判定と応答
+	CheckAllCollision();
 
 	// 追従カメラの更新
 	followCamera_->Update();
@@ -217,4 +223,19 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::CheckAllCollision() {
+	// 衝突マネージャのリセット
+	collisionManager_->Reset();
+
+	// コライダーをリストに登録
+	collisionManager_->AddCollider(player_.get());
+	// 敵全てについて
+	for (const std::unique_ptr<Enemy>& enemy : enemies_) {
+		collisionManager_->AddCollider(enemy.get());
+	}
+
+	// 衝突判定と応答
+	collisionManager_->CheckAllCollisions();
 }

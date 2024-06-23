@@ -265,7 +265,6 @@ Matrix4x4 MyMath::MakeViewportMatrix(float left, float top, float width, float h
 	return result;
 }
 
-float MyMath::DegToRad(float deg)
-{
+float MyMath::DegToRad(float deg) {
 	return static_cast<float>(deg * (M_PI / 180));
 }

@@ -112,6 +112,16 @@ public:
 	/// </summary>
 	void SetLockOn(LockOn* lockOn);
 
+	/// <summary>
+	/// 中心座標を取得
+	/// </summary>
+	Vector3 GetCenterPosition() const override;
+
+	/// <summary>
+	/// 衝突を検出したら呼び出されるコールバック関数
+	/// </summary>
+	void OnCollision() override;
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransformBody_;
