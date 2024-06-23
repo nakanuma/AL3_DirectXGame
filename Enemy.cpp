@@ -27,7 +27,7 @@ void Enemy::Update()
 	BaseCharacter::Update();
 
 	// Y軸周りに回転
-	worldTransformBody_.rotation_.y += 0.05f;
+	worldTransformBody_.rotation_.y += 0.03f;
 	// 向いている方向へ移動
 	Vector3 velocity{ 0.0f, 0.0f, kSpeed };
 	velocity = MyMath::TransformNormal(velocity, worldTransformBody_.matWorld_);

@@ -161,6 +161,9 @@ private:
 	// 速度
 	Vector3 velocity_ = {};
 
+	// 攻撃時の前方への速度
+	float moveSpeed_ = 1.0f;
+
 	// ロックオン
 	const LockOn* lockOn_ = nullptr;
 };

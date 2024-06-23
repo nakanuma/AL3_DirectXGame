@@ -179,6 +179,15 @@ void Player::BehaviorRootUpdate()
 	/// 
 
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		// ゲームパッドのAボタンが押された際に攻撃状態へ遷移
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+			behaviorRequest_ = Behavior::kAttack;
+		}
+		// ゲームパッドのBボタンが押された際にジャンプ行動へ遷移
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
+			behaviorRequest_ = Behavior::kJump;
+		}
+
 		float lx = static_cast<float>(joyState.Gamepad.sThumbLX) / SHRT_MAX;
 		float ly = static_cast<float>(joyState.Gamepad.sThumbLY) / SHRT_MAX;
 
@@ -212,15 +221,6 @@ void Player::BehaviorRootUpdate()
 			worldTransformBody_.translation_.x += velocity_.x;
 			worldTransformBody_.translation_.z += velocity_.z;
 
-			// ゲームパッドのAボタンが押された際に攻撃状態へ遷移
-			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
-				behaviorRequest_ = Behavior::kAttack;
-			}
-
-			// ゲームパッドのBボタンが押された際にジャンプ行動へ遷移
-			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
-				behaviorRequest_ = Behavior::kJump;
-			}
 
 			// 移動入力が無い場合、自キャラをロックオン対象の方向に向ける処理
 		} else if (lockOn_ != nullptr && lockOn_->ExistTarget()) {
@@ -249,6 +249,32 @@ void Player::BehaviorRootUpdate()
 
 void Player::BehaviorAttackUpdate()
 {
+	// ロックオン中
+	if (lockOn_ != nullptr && lockOn_->ExistTarget()) {
+		// 自キャラをロックオン対象の方向に向ける処理
+		// ロックオン対象
+		Vector3 lockOnPosition = lockOn_->GetTargetPosition();
+		// 追従対象からロックオン対象へのベクトル
+		Vector3 sub = lockOnPosition - worldTransformBody_.translation_;
+
+		//距離
+		float distance = MyMath::Length(sub);
+		// 距離しきい値
+		const float threshold = 0.2f;
+
+		// しきい値より離れているときのみ
+		if (distance > threshold) {
+			// Y軸周り角度
+			worldTransformBody_.rotation_.y = std::atan2(sub.x, sub.z);
+
+			// しきい値を超える速さなら補正する
+			if (moveSpeed_ > distance - threshold) {
+				// ロックオン対象へのめりこみ防止
+				moveSpeed_ = distance - threshold;
+			}
+		}
+	}
+
 	// ハンマーが振り下ろされるまでの更新
 	if (worldTransformHammer_.rotation_.x <= std::numbers::pi_v<float> / 2.0f) {
 		// ハンマーをX軸周りに回転
@@ -256,6 +282,12 @@ void Player::BehaviorAttackUpdate()
 		// 両腕をX軸周りに回転
 		worldTransformL_arm_.rotation_.x += 0.1f;
 		worldTransformR_arm_.rotation_.x += 0.1f;
+		// プレイヤーを前方へ移動させる処理
+		float moveDirection = worldTransformBody_.rotation_.y;
+		float moveDistance = 1.0f;
+		Vector3 moveVector = {moveDistance * std::sin(moveDirection), 0.0f, moveDistance * std::cos(moveDirection)};
+
+		worldTransformBody_.translation_ += moveVector * moveSpeed_;
 	} else {
 		// 硬直タイマーを増加
 		postAttackTimer_++;

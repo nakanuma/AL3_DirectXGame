@@ -26,4 +26,7 @@ struct Vector3 final {
 		z -= other.z;
 		return *this;
 	}
+
+	friend Vector3 operator*(const Vector3& vec, float scalar) 
+	{ return {vec.x * scalar, vec.y * scalar, vec.z * scalar}; }
 };
