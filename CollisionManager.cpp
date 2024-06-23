@@ -1,5 +1,18 @@
 #include "CollisionManager.h"
 #include "MyMath.h"
+#include "GlobalVariables.h"
+
+void CollisionManager::Initialize() {
+	model_.reset(Model::CreateFromOBJ("sphere", true));
+	assert(model_);
+
+	// ImGui表示
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Collision";
+	// グループを追加
+	GlobalVariables::GetInstance()->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Visible", visible_);
+}
 
 void CollisionManager::Reset() {
 	// リストを空っぽにする
@@ -46,4 +59,33 @@ void CollisionManager::CheckAllCollisions() {
 
 void CollisionManager::AddCollider(Collider* collider) { 
 	colliders_.push_back(collider); 
+}
+
+void CollisionManager::UpdateWorldTransform() {
+	// グローバル変数からvisible_の最新値を取得
+	visible_ = GlobalVariables::GetInstance()->GetBoolValue("Collision", "Visible");
+
+	// 非表示なら抜ける
+	if (!visible_) {
+		return;
+	}
+
+	// 全てのコライダーについて
+	for (Collider* collider : colliders_) {
+		// 更新
+		collider->UpdateWorldTransform();
+	}
+}
+
+void CollisionManager::Draw(const ViewProjection& viewProjection) {
+	// 非表示なら抜ける
+	if (!visible_) {
+		return;
+	}
+
+	// 全てのコライダーについて
+	for (Collider* collider : colliders_) {
+		// 描画
+		collider->Draw(model_.get(), viewProjection);
+	}
 }

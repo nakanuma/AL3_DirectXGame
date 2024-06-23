@@ -1,12 +1,18 @@
 #pragma once
-#include "Collider.h"
 #include <list>
+#include "Collider.h"
+#include "Model.h"
 
 /// <summary>
 /// 衝突マネージャ
 /// </summary>
 class CollisionManager {
 public:
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
 	/// <summary>
 	/// リセット
 	/// </summary>
@@ -29,7 +35,23 @@ public:
 	/// </summary>
 	void AddCollider(Collider* collider);
 
+	/// <summary>
+	/// ワールドトランスフォームの更新
+	/// </summary>
+	void UpdateWorldTransform();
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw(const ViewProjection& viewProjection);
+
 private:
 	// コライダー
 	std::list<Collider*> colliders_;
+
+	// デバッグ表示用モデル
+	std::unique_ptr<Model> model_;
+
+	// コライダー表示
+	bool visible_ = true;
 };

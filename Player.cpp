@@ -373,7 +373,7 @@ void Player::ApplyGlobalVariables()
 void Player::SetLockOn(LockOn* lockOn) { lockOn_ = lockOn; }
 
 Vector3 Player::GetCenterPosition() const {
-	const Vector3 offset = {0.0f, 1.5f, 0.0f}; // モデルの真ん中当たりを指定
+	const Vector3 offset = {0.0f, 2.0f, 0.0f}; // モデルの真ん中当たりを指定
 	// ワールド座標に変換
 	Vector3 worldPos = MyMath::Transform(offset, worldTransformBody_.matWorld_);
 	return worldPos;

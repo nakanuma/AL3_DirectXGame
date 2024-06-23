@@ -6,6 +6,9 @@ void BaseCharacter::Initialize(const std::vector<Model*>& models)
 	models_ = models;
 	// ワールド変換データの初期化
 	worldTransform_.Initialize();
+
+	// コライダーの初期化
+	Collider::Initialize();
 }
 
 void BaseCharacter::Update()

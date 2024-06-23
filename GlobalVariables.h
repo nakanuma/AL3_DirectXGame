@@ -8,18 +8,8 @@
 
 using json = nlohmann::json;
 
-using Item = std::variant<int32_t, float, Vector3>;
+using Item = std::variant<int32_t, float, Vector3, bool>;
 using Group = std::map<std::string, Item>;
-
-//// 項目
-//struct Item {
-//	// 項目の値
-//	std::variant<int32_t, float, Vector3> value;
-//};
-//// グループ
-//struct Group {
-//	std::map<std::string, Item> items;
-//};
 
 /// <summary>
 /// グローバル変数
@@ -45,6 +35,8 @@ public:
 	void SetValue(const std::string& groupName, const std::string& key, float value);
 	// 値のセット(Vector3)
 	void SetValue(const std::string& groupName, const std::string& key, const Vector3& value);
+	// 値のセット(bool)
+	void SetValue(const std::string& groupName, const std::string& key, bool value);
 
 	/// <summary>
 	/// 毎フレーム処理
@@ -74,11 +66,14 @@ public:
 	void AddItem(const std::string& groupName, const std::string& key, float value);
 	// 項目の追加(vector3)
 	void AddItem(const std::string& groupName, const std::string& key, const Vector3& value);
+	// 項目の追加(bool)
+	void AddItem(const std::string& groupName, const std::string& key, bool value);
 
 	// 値を取得
 	int32_t GetIntValue(const std::string& groupName, const std::string& key) const;
 	float GetFloatValue(const std::string& groupName, const std::string& key) const;
 	Vector3 GetVector3Value(const std::string& groupName, const std::string& key) const;
+	bool GetBoolValue(const std::string& groupName, const std::string& key) const;
 
 private:
 	GlobalVariables() = default;

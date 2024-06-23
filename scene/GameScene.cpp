@@ -48,6 +48,8 @@ void GameScene::Initialize() {
 
 	// 自キャラの初期化
 	player_->Initialize(playerModels);
+	// 自キャラの当たり判定半径を設定
+	player_->SetRadius(2.0f);
 
 
 	// 敵キャラの3Dモデルの生成
@@ -60,8 +62,12 @@ void GameScene::Initialize() {
 	// 敵キャラの生成
 	for (uint32_t i = 0; i < kNumEnemies_; ++i) {
 		auto enemy = std::make_unique<Enemy>();
+		// 初期化
 		enemy->Initialize(enemyModels);
+		// 初期座標
 		enemy->SetPosition({1.0f + (i * 6.0f), 1.0f, 8.0f});
+		// 当たり判定半径
+		enemy->SetRadius(2.0f);
 		enemies_.push_back(std::move(enemy));
 	}
 
@@ -106,6 +112,8 @@ void GameScene::Initialize() {
 
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
+	// 衝突マネージャの初期化
+	collisionManager_->Initialize();
 
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -136,6 +144,9 @@ void GameScene::Update() {
 
 	// 衝突判定と応答
 	CheckAllCollision();
+
+	// デバッグ表示用にワールドトランスフォームを更新
+	collisionManager_->UpdateWorldTransform();
 
 	// 追従カメラの更新
 	followCamera_->Update();
@@ -203,6 +214,9 @@ void GameScene::Draw() {
 
 	// 地面の描画
 	ground_->Draw();
+
+	// 当たり判定の表示
+	collisionManager_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
