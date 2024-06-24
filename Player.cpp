@@ -32,7 +32,7 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformHammer_.parent_ = &worldTransformBody_;
 
 	// 浮遊ギミック初期化
-	InitializeFloatingGimmick();
+	InitializeFloatingGimmick(); 
 	// 腕振りギミック初期化
 	InitializeArmSwingGimmick();
 
