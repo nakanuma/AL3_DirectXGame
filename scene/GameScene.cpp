@@ -40,17 +40,24 @@ void GameScene::Initialize() {
 
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
+	// ハンマーの生成
+	hammer_ = std::make_unique<Hammer>();
 
 	// 自キャラモデル
 	std::vector<Model*> playerModels = {
-		modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(), modelFighterR_arm_.get(), modelFighterHammer_.get()
+		modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(), modelFighterR_arm_.get()
 	};
 
 	// 自キャラの初期化
 	player_->Initialize(playerModels);
 	// 自キャラの当たり判定半径を設定
 	player_->SetRadius(2.0f);
-
+	// ハンマーの初期化
+	hammer_->Initialize(modelFighterHammer_.get());
+	// 自キャラにハンマーを設定
+	player_->SetHammer(hammer_.get());
+	// ハンマーの親に自キャラのワールド行列を設定
+	hammer_->SetParent(&player_->GetWorldTransformBody());
 
 	// 敵キャラの3Dモデルの生成
 	modelEnemyBody_.reset(Model::CreateFromOBJ("enemy_body", true));

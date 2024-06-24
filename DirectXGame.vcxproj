@@ -117,6 +117,7 @@
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="GlobalVariables.cpp" />
     <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="Hammer.cpp" />
     <ClCompile Include="LockOn.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyMath.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="GlobalVariables.h" />
     <ClInclude Include="Ground.h" />
+    <ClInclude Include="Hammer.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="LockOn.h" />
     <ClInclude Include="math\Matrix4x4.h" />

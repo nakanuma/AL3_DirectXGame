@@ -9,6 +9,7 @@
 
 // 前方宣言
 class LockOn;
+class Hammer;
 
 // 振る舞い
 enum class Behavior {
@@ -122,20 +123,25 @@ public:
 	/// </summary>
 	void OnCollision() override;
 
+	/// <summary>
+	/// ハンマーを設定
+	/// </summary>
+	void SetHammer(Hammer* hammer) { hammer_ = hammer; }
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransformBody_;
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformL_arm_;
 	WorldTransform worldTransformR_arm_;
-	WorldTransform worldTransformHammer_;
+	/*WorldTransform worldTransformHammer_;*/
 
 	// モデル
 	Model* modelBody_ = nullptr;
 	Model* modelHead_ = nullptr;
 	Model* modelL_arm_ = nullptr;
 	Model* modelR_arm_ = nullptr;
-	Model* modelHammer_ = nullptr;
+	/*Model* modelHammer_ = nullptr;*/
 
 	// モデル番号
 	const uint32_t kModelIndexBody = 0;
@@ -143,6 +149,11 @@ private:
 	const uint32_t kModelIndexL_arm = 2;
 	const uint32_t kModelIndexR_arm = 3;
 	const uint32_t kModelIndexHammer = 4;
+
+	// ハンマー
+	Hammer* hammer_ = nullptr;
+	// ハンマーの回転角
+	float rotateHammer_ = 0.0f;
 
 	// ビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;

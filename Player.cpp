@@ -9,6 +9,7 @@
 #include "MyMath.h"
 #include "GlobalVariables.h"
 #include "LockOn.h"
+#include "Hammer.h"
 
 void Player::Initialize(const std::vector<Model*>& models)
 {
@@ -22,14 +23,14 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformL_arm_.translation_ = { -1.2f,1.8f,0.0f }; // 初期位置を変更
 	worldTransformR_arm_.Initialize();
 	worldTransformR_arm_.translation_ = { 1.2f,1.8f,0.0f }; // 初期位置を変更
-	worldTransformHammer_.Initialize();
-	worldTransformHammer_.translation_.y = 2.0f; // 体の中央を基準に設定
+	//worldTransformHammer_.Initialize();
+	//worldTransformHammer_.translation_.y = 2.0f; // 体の中央を基準に設定
 
 	// 全てのパーツ同士の親子関係を結ぶ（Bodyが親になるように設定）
 	worldTransformHead_.parent_ = &worldTransformBody_;
 	worldTransformL_arm_.parent_ = &worldTransformBody_;
 	worldTransformR_arm_.parent_ = &worldTransformBody_;
-	worldTransformHammer_.parent_ = &worldTransformBody_;
+	/*worldTransformHammer_.parent_ = &worldTransformBody_;*/
 
 	// 浮遊ギミック初期化
 	InitializeFloatingGimmick(); 
@@ -111,7 +112,8 @@ void Player::Draw(const ViewProjection& viewProjection)
 	models_[kModelIndexR_arm]->Draw(worldTransformR_arm_, viewProjection);
 	// 攻撃状態時のみハンマーを描画
 	if (behavior_ == Behavior::kAttack) {
-		models_[kModelIndexHammer]->Draw(worldTransformHammer_, viewProjection);
+		/*models_[kModelIndexHammer]->Draw(worldTransformHammer_, viewProjection);*/
+		hammer_->Draw(viewProjection);
 	}
 }
 
@@ -276,9 +278,11 @@ void Player::BehaviorAttackUpdate()
 	}
 
 	// ハンマーが振り下ろされるまでの更新
-	if (worldTransformHammer_.rotation_.x <= std::numbers::pi_v<float> / 2.0f) {
+	if (hammer_->GetRotation().x <= std::numbers::pi_v<float> / 2.0f) {
 		// ハンマーをX軸周りに回転
-		worldTransformHammer_.rotation_.x += 0.1f;
+		/*worldTransformHammer_.rotation_.x += 0.1f;*/
+		rotateHammer_ += 0.1f;
+		hammer_->SetRotation({ rotateHammer_, 0.0f, 0.0f });
 		// 両腕をX軸周りに回転
 		worldTransformL_arm_.rotation_.x += 0.1f;
 		worldTransformR_arm_.rotation_.x += 0.1f;
@@ -302,7 +306,7 @@ void Player::BehaviorAttackUpdate()
 	worldTransformHead_.UpdateMatrix();
 	worldTransformL_arm_.UpdateMatrix();
 	worldTransformR_arm_.UpdateMatrix();
-	worldTransformHammer_.UpdateMatrix();
+	hammer_->Update();
 }
 
 void Player::BehaviorJumpUpdate() 
@@ -328,7 +332,7 @@ void Player::BehaviorJumpUpdate()
 	worldTransformHead_.UpdateMatrix();
 	worldTransformL_arm_.UpdateMatrix();
 	worldTransformR_arm_.UpdateMatrix();
-	worldTransformHammer_.UpdateMatrix();
+	hammer_->Update();
 }
 
 void Player::BehaviorRootInitialize()
@@ -341,7 +345,8 @@ void Player::BehaviorAttackInitialize()
 	worldTransformL_arm_.rotation_.x = std::numbers::pi_v<float>;
 	worldTransformR_arm_.rotation_.x = std::numbers::pi_v<float>;
 	// ハンマーの初期回転角
-	worldTransformHammer_.rotation_.x = 0.0f;
+	hammer_->SetRotation({ 0.0f, 0.0f, 0.0f });
+	rotateHammer_ = 0.0f;
 	// 攻撃後の硬直時間
 	postAttackTimer_ = 0;
 }
