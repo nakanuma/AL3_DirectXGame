@@ -19,7 +19,7 @@ public:
 	/// <summary>
 	/// 衝突時に呼ばれる関数
 	/// </summary>
-	virtual void OnCollision() {}
+	virtual void OnCollision([[maybe_unused]]Collider* other) {}
 
 	/// <summary>
 	/// 半径を取得
@@ -46,10 +46,23 @@ public:
 	/// </summary>
 	void Draw(Model* model, const ViewProjection& viewProjection);
 
+	/// <summary>
+	/// 種別IDを取得
+	/// </summary>
+	uint32_t getTypeID() const { return typeID_; }
+
+	/// <summary>
+	/// 種別IDを設定
+	/// </summary>
+	void SetTypeID(uint32_t typeID) { typeID_ = typeID; }
+
 private:
 	// 衝突半径
 	float radius_ = 1.5f;
 
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
+
+	// 種別ID
+	uint32_t typeID_ = 0u;
 };

@@ -41,6 +41,11 @@ public:
 	/// </summary>
 	void SetParent(const WorldTransform* worldTransform) { worldTransform_.parent_ = worldTransform; }
 
+	/// <summary>
+	/// 衝突時コールバック
+	/// </summary>
+	void OnCollision([[maybe_unused]] Collider* other) override;
+
 private:
 	Model* model_ = nullptr;
 	WorldTransform worldTransform_;

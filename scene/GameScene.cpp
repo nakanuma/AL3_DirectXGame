@@ -58,6 +58,8 @@ void GameScene::Initialize() {
 	player_->SetHammer(hammer_.get());
 	// ハンマーの親に自キャラのワールド行列を設定
 	hammer_->SetParent(&player_->GetWorldTransformBody());
+	// ハンマーの当たり判定半径を設定
+	hammer_->SetRadius(2.5f);
 
 	// 敵キャラの3Dモデルの生成
 	modelEnemyBody_.reset(Model::CreateFromOBJ("enemy_body", true));
@@ -251,7 +253,12 @@ void GameScene::CheckAllCollision() {
 	collisionManager_->Reset();
 
 	// コライダーをリストに登録
+	// プレイヤー
 	collisionManager_->AddCollider(player_.get());
+	// ハンマー（攻撃中の場合のみ）
+	if (player_->GetIsAttacking()) {
+		collisionManager_->AddCollider(hammer_.get());
+	}
 	// 敵全てについて
 	for (const std::unique_ptr<Enemy>& enemy : enemies_) {
 		collisionManager_->AddCollider(enemy.get());

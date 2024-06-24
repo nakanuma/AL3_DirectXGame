@@ -2,6 +2,7 @@
 #include <numbers>
 
 #include "MyMath.h"
+#include "CollisionTypeIdDef.h"
 
 void Enemy::Initialize(const std::vector<Model*>& models)
 {
@@ -19,6 +20,9 @@ void Enemy::Initialize(const std::vector<Model*>& models)
 	// 親子関係を結ぶ
 	worldTransformL_spear_.parent_ = &worldTransformBody_;
 	worldTransformR_spear_.parent_ = &worldTransformBody_;
+
+	// 種別IDを設定
+	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemy));
 }
 
 void Enemy::Update()

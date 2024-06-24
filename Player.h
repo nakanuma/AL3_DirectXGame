@@ -121,12 +121,17 @@ public:
 	/// <summary>
 	/// 衝突を検出したら呼び出されるコールバック関数
 	/// </summary>
-	void OnCollision() override;
+	void OnCollision([[maybe_unused]] Collider* other) override;
 
 	/// <summary>
 	/// ハンマーを設定
 	/// </summary>
 	void SetHammer(Hammer* hammer) { hammer_ = hammer; }
+
+	/// <summary>
+	/// 攻撃中かどうかを取得
+	/// </summary>
+	bool GetIsAttacking() { return isAttacking_; }
 
 private:
 	// ワールド変換データ
@@ -178,6 +183,8 @@ private:
 	uint32_t postAttackTimer_ = 0;
 	// 攻撃後の硬直時間
 	const uint32_t kPostAttackCooldown = 10;
+	// 攻撃中フラグ
+	bool isAttacking_ = false;
 
 	// 速度
 	Vector3 velocity_ = {};

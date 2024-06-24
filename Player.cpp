@@ -112,7 +112,6 @@ void Player::Draw(const ViewProjection& viewProjection)
 	models_[kModelIndexR_arm]->Draw(worldTransformR_arm_, viewProjection);
 	// 攻撃状態時のみハンマーを描画
 	if (behavior_ == Behavior::kAttack) {
-		/*models_[kModelIndexHammer]->Draw(worldTransformHammer_, viewProjection);*/
 		hammer_->Draw(viewProjection);
 	}
 }
@@ -184,6 +183,8 @@ void Player::BehaviorRootUpdate()
 		// ゲームパッドのAボタンが押された際に攻撃状態へ遷移
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
 			behaviorRequest_ = Behavior::kAttack;
+			// 攻撃中にする
+			isAttacking_ = true;
 		}
 		// ゲームパッドのBボタンが押された際にジャンプ行動へ遷移
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
@@ -299,6 +300,8 @@ void Player::BehaviorAttackUpdate()
 	// 硬直時間終了後に通常状態に遷移させる
 	if (postAttackTimer_ > kPostAttackCooldown) {
 		behaviorRequest_ = Behavior::kRoot;
+		// 攻撃終了
+		isAttacking_ = false;
 	}
 
 	// 行列を更新
@@ -384,7 +387,7 @@ Vector3 Player::GetCenterPosition() const {
 	return worldPos;
 }
 
-void Player::OnCollision() {
+void Player::OnCollision([[maybe_unused]] Collider* other) {
 	// ジャンプリクエスト
-	behaviorRequest_ = Behavior::kJump;
+	/*behaviorRequest_ = Behavior::kJump;*/
 }
