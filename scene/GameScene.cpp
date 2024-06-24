@@ -36,7 +36,7 @@ void GameScene::Initialize() {
 	modelFighterHead_.reset(Model::CreateFromOBJ("float_Head", true));
 	modelFighterL_arm_.reset(Model::CreateFromOBJ("float_L_arm", true));
 	modelFighterR_arm_.reset(Model::CreateFromOBJ("float_R_arm", true));
-	modelFighterHammer_.reset(Model::CreateFromOBJ("hammer", true));
+	modelFighterHammer_.reset(Model::CreateFromOBJ("hammer", true));　
 
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
