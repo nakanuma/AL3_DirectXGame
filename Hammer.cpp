@@ -50,8 +50,11 @@ void Hammer::OnCollision(Collider* other)
 	// 衝突相手が敵なら
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) {
 		Enemy* enemy = static_cast<Enemy*>(other);
+		// 敵の座標を取得
+		enemyPosition_ = enemy->GetCenterPosition();
 		// 敵の位置にエフェクトを発生
 		enemy;
+
 		ImGui::Begin("hit");
 		ImGui::Text("hitting");
 		ImGui::End();

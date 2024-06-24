@@ -179,10 +179,10 @@ private:
 	Behavior behavior_ = Behavior::kRoot;
 	// 次の振る舞いリクエスト
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+	// ハンマーを振り下ろした際の硬直時間
+	const uint32_t kPostAttackCooldown = 10;
 	// 攻撃後の硬直時間をカウントする変数
 	uint32_t postAttackTimer_ = 0;
-	// 攻撃後の硬直時間
-	const uint32_t kPostAttackCooldown = 10;
 	// 攻撃中フラグ
 	bool isAttacking_ = false;
 

@@ -92,7 +92,6 @@ void Player::Update()
 		BehaviorJumpUpdate();
 	}
 
-
 	// デバッグ用
 	ImGui::Begin("Player");
 	ImGui::Text("Right Stick : Camera Rotate");

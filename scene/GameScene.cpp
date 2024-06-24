@@ -76,7 +76,7 @@ void GameScene::Initialize() {
 		// 初期座標
 		enemy->SetPosition({1.0f + (i * 6.0f), 1.0f, 8.0f});
 		// 当たり判定半径
-		enemy->SetRadius(2.0f);
+		enemy->SetRadius(2.5f);
 		enemies_.push_back(std::move(enemy));
 	}
 

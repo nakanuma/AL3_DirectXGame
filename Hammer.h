@@ -46,8 +46,14 @@ public:
 	/// </summary>
 	void OnCollision([[maybe_unused]] Collider* other) override;
 
+	void ParticleInitialize();
+	void ParticleUpdate();
+	void ParticleDraw(const ViewProjection& viewProjection);
+
 private:
 	Model* model_ = nullptr;
 	WorldTransform worldTransform_;
+
+	Vector3 enemyPosition_;
 };
 
