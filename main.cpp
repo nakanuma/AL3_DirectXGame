@@ -1,6 +1,11 @@
 #include <Windows.h>
 #include <cstdint>
 #include <assert.h>
+#define DIRECTINPUT_VERSON 0x0800 // DirectInputのバージョン指定
+#include <dinput.h>
+
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
  
 // MyClass 
 #include "MyWindow.h"
@@ -43,8 +48,25 @@ const char* BlendModeNames[6] = {
 	"kBlendModeScreen"
 };
 
+/////////////////// ↓入力デバイス関連↓ ///////////////////
+
+char keys[256] = { 0 };
+char preKeys[256] = { 0 };
+
+// キーが押された場合を判定
+bool isKeyPressed(char key) {
+	return keys[key] && !preKeys[key];
+}
+
+// キーが離された場合を判定
+bool isKeyReleased(char key) {
+	return !keys[key] && preKeys[key];
+}
+
+/////////////////// ↑入力デバイス関連↑ ///////////////////
+
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker::GetInstance();
 	DirectXBase* dxBase = nullptr;
 
@@ -58,6 +80,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dxBase = DirectXBase::GetInstance();
 	dxBase->Initialize();
 
+	/////////////////// ↓入力デバイス初期化処理↓ ///////////////////
+
+	// DirectInputの初期化
+	IDirectInput8* directInput = nullptr;
+	HRESULT result = DirectInput8Create(
+		hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8,
+		(void**)&directInput, nullptr);
+	assert(SUCCEEDED(result));
+
+	// キーボードデバイスの生成
+	IDirectInputDevice8* keyboard = nullptr;
+	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+	assert(SUCCEEDED(result));
+	
+	// 入力データ形式のセット
+	result = keyboard->SetDataFormat(&c_dfDIKeyboard); // 標準形式
+	assert(SUCCEEDED(result));
+
+	// 排他制御レベルのセット
+	result = keyboard->SetCooperativeLevel(
+		Window::GetHandle(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	assert(SUCCEEDED(result));
+
+	/////////////////// ↑入力デバイス初期化処理↑ ///////////////////
+
 	// TextureManagerの初期化（srvHeapの生成）
 	TextureManager::Initialize(dxBase->GetDevice());
 
@@ -69,14 +116,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 
 
 	// モデル読み込み
-	ModelData fenceModel = ModelManager::LoadObjFile("resources/Models", "fence.obj", dxBase->GetDevice());
+	ModelData planeModel = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
 
 	// 平面オブジェクトの生成
-	Object3D fence;
+	Object3D plane;
 	// モデルを指定
-	fence.model_ = &fenceModel;
+	plane.model_ = &planeModel;
 	// 初期回転角を設定
-	fence.transform_.rotate = { 0.3f, 3.1f, 0.0f };
+	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -207,6 +254,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
+		/////////////////// ↓入力デバイス更新処理↓ ///////////////////
+
+		// キーボード情報の取得開始
+		keyboard->Acquire();
+		// 全キーの入力状態を取得する
+		BYTE key[256] = {};
+		keyboard->GetDeviceState(sizeof(key), key);
+
+		// preKeysにkeysをコピー
+		memcpy(preKeys, keys, sizeof(keys));
+		// keysに最新のキー状態をコピー
+		memcpy(keys, key, sizeof(keys));
+
+		/////////////////// ↑入力デバイス更新処理↑ ///////////////////
+
 		// フレーム開始処理
 		dxBase->BeginFrame();
 		// 描画前処理
@@ -226,7 +288,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//////////////////////////////////////////////////////
 
 		// 平面オブジェクトの行列更新
-		fence.UpdateMatrix();
+		plane.UpdateMatrix();
 
 		// Sprite用のWorldViewProjectionMatrixを作る
 		Matrix worldMatrixSprite = transformSprite.MakeAffineMatrix();
@@ -243,12 +305,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		uvTransformMatrix = uvTransformMatrix * Matrix::Translation(uvTransformSprite.translate);
 		materialDataSprite->uvTransform = uvTransformMatrix;
 
+		// キー入力でplaneを移動
+		if (key[DIK_W]) {
+			plane.transform_.translate.y += 0.01f;
+		}
+		if (key[DIK_S]) {
+			plane.transform_.translate.y -= 0.01f;
+		}
+
+		if (isKeyPressed(DIK_A)) { // 押された瞬間
+			plane.transform_.translate.x -= 0.1f;
+		}
+		if (isKeyReleased(DIK_D)) { // 離された瞬間
+			plane.transform_.translate.x += 0.1f;
+		}
+
 		// ImGui
 		ImGui::Begin("Settings");
-		ImGui::DragFloat3("translate", &fence.transform_.translate.x, 0.01f);
-		ImGui::DragFloat3("rotate", &fence.transform_.rotate.x, 0.01f);
-		ImGui::DragFloat3("scale", &fence.transform_.scale.x, 0.01f);
-		ImGui::ColorEdit4("color", &fence.materialCB_.data_->color.x);
+		ImGui::DragFloat3("translate", &plane.transform_.translate.x, 0.01f);
+		ImGui::DragFloat3("rotate", &plane.transform_.rotate.x, 0.01f);
+		ImGui::DragFloat3("scale", &plane.transform_.scale.x, 0.01f);
+		ImGui::ColorEdit4("color", &plane.materialCB_.data_->color.x);
 		ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
 		if (ImGui::BeginCombo("Blend", BlendModeNames[selectedBlendMode])) {
 			for (int n = 0; n < 6; n++) {
@@ -260,6 +337,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			ImGui::EndCombo();
 		}
+		
+		ImGui::NewLine();
+		ImGui::Text("Push [W] / [S] : up / down");
+		ImGui::Text("Pressed [A] : move left");
+		ImGui::Text("Released [D] : move right");
+
 		ImGui::End();
 
 		//////////////////////////////////////////////////////
@@ -299,7 +382,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 		// 平面オブジェクトの描画
-		fence.Draw();
+		plane.Draw();
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
