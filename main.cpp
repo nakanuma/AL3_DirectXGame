@@ -1,7 +1,7 @@
 #include <Windows.h>
 #include <cstdint>
 #include <assert.h>
-
+ 
 // MyClass 
 #include "MyWindow.h"
 #include "Logger.h"
