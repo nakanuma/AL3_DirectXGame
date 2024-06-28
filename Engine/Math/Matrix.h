@@ -62,7 +62,3 @@ public:
 	static Matrix RotationRollPitchYaw(float roll, float pitch, float yaw);
 };
 
-struct TransformationMatrix {
-	Matrix WVP;
-	Matrix World;
-};

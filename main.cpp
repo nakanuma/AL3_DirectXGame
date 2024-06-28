@@ -1,5 +1,5 @@
 #include <Windows.h>
-#include <cstdint> 
+#include <cstdint>
 #include <assert.h>
 
 // MyClass 
@@ -18,7 +18,6 @@
 #include "Object3D.h"
 #include "OutlinedObject.h"
 #include "Emitter.h"
-#include "StructuredBuffer.h"
 
 struct DirectionalLight {
 	Float4 color; // ライトの色
@@ -70,31 +69,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 
 
 	// モデル読み込み
-	ModelData planeModel = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
+	ModelData fenceModel = ModelManager::LoadObjFile("resources/Models", "fence.obj", dxBase->GetDevice());
 
 	// 平面オブジェクトの生成
-	Object3D plane;
+	Object3D fence;
 	// モデルを指定
-	plane.model_ = &planeModel;
+	fence.model_ = &fenceModel;
 	// 初期回転角を設定
-	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
-
-
-	// StructuredBufferの作成
-	StructuredBuffer<TransformationMatrix> instancingBuffer(10);
-
-	// 単位行列を書き込んでおく
-	for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
-		instancingBuffer.data_[index].WVP = Matrix::Identity();
-		instancingBuffer.data_[index].World = Matrix::Identity();
-	}
-
-	Transform transforms[10];
-	for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
-		transforms[index].scale = { 1.0f, 1.0f, 1.0f };
-		transforms[index].rotate = { 0.0f, 3.1f, 0.0f };
-		transforms[index].translate = { index * 0.1f, index * 0.1f, index * 0.1f };
-	}
+	fence.transform_.rotate = { 0.3f, 3.1f, 0.0f };
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -244,7 +226,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//////////////////////////////////////////////////////
 
 		// 平面オブジェクトの行列更新
-		plane.UpdateMatrix();
+		fence.UpdateMatrix();
 
 		// Sprite用のWorldViewProjectionMatrixを作る
 		Matrix worldMatrixSprite = transformSprite.MakeAffineMatrix();
@@ -261,24 +243,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		uvTransformMatrix = uvTransformMatrix * Matrix::Translation(uvTransformSprite.translate);
 		materialDataSprite->uvTransform = uvTransformMatrix;
 
-
-		for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
-			Matrix worldMatrix = transforms[index].MakeAffineMatrix();
-			Matrix viewMatrix = Camera::GetCurrent()->MakeViewMatrix();
-			Matrix projectionMatrix = Camera::GetCurrent()->MakePerspectiveFovMatrix();
-			Matrix viewProjectionMatrix = viewMatrix * projectionMatrix;
-			Matrix worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
-			instancingBuffer.data_[index].WVP = worldViewProjectionMatrix;
-			instancingBuffer.data_[index].World = worldMatrix;
-		}
-
-
 		// ImGui
 		ImGui::Begin("Settings");
-		ImGui::DragFloat3("translate", &plane.transform_.translate.x, 0.01f);
-		ImGui::DragFloat3("rotate", &plane.transform_.rotate.x, 0.01f);
-		ImGui::DragFloat3("scale", &plane.transform_.scale.x, 0.01f);
-		ImGui::ColorEdit4("color", &plane.materialCB_.data_->color.x);
+		ImGui::DragFloat3("translate", &fence.transform_.translate.x, 0.01f);
+		ImGui::DragFloat3("rotate", &fence.transform_.rotate.x, 0.01f);
+		ImGui::DragFloat3("scale", &fence.transform_.scale.x, 0.01f);
+		ImGui::ColorEdit4("color", &fence.materialCB_.data_->color.x);
 		ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
 		if (ImGui::BeginCombo("Blend", BlendModeNames[selectedBlendMode])) {
 			for (int n = 0; n < 6; n++) {
@@ -329,7 +299,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 		// 平面オブジェクトの描画
-		plane.DrawInstancing(instancingBuffer);
+		fence.Draw();
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
@@ -340,15 +310,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// 
 
 		// VBVを設定
-		//dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
-		//// IBVを設定
-		//dxBase->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);
-		//// マテリアルCBufferの場所を設定
-		//dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
-		//// TransformatinMatrixCBufferの場所を設定
-		//dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-		//// SRVのDescriptorTableの先頭を設定
-		//TextureManager::SetDescriptorTable(2, dxBase->GetCommandList(), uvCheckerGH);
+		dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
+		// IBVを設定
+		dxBase->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);
+		// マテリアルCBufferの場所を設定
+		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
+		// TransformatinMatrixCBufferの場所を設定
+		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+		// SRVのDescriptorTableの先頭を設定
+		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList(), uvCheckerGH);
 		// 描画（DrawCall/ドローコール）6個のインデックスを使用し1つのインスタンスを描画
 		/*dxBase->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);*/
 

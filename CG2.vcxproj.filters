@@ -230,9 +230,6 @@
     <ClInclude Include="Util.h">
       <Filter>未分類\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="StructuredBuffer.h">
-      <Filter>Engine\DirectX</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shaders\Object3d.VS.hlsl">
@@ -247,12 +244,6 @@
     <FxCompile Include="resources\Shaders\Toon.PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="resources\Shaders\Particle.VS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="resources\Shaders\Particle.PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -264,9 +255,6 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="resources\Shaders\Toon.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="resources\Shaders\Particle.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
